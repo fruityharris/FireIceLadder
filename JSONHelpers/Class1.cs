@@ -123,7 +123,7 @@ namespace JSONHelpers
         public List<int?> ranks { get; set; }
         public string id { get; set; }
         public List<GamePlayer> GamePlayers { get; set; }
-        public List<LadderPlayer> Ladder { get; set; }
+        public Dictionary<string, int> Ladder { get; set; }
         public int? round { get; set; }
         public List<int?> vps { get; set; }
         public List<int?> dropped { get; set; }
@@ -141,37 +141,5 @@ namespace JSONHelpers
         public int processingorder { get; set; }
         public string faction { get; set; }
         public int? vp { get; set; }
-    }
-
-    public class LadderPlayer
-    {
-        public int Position;
-        public int? OldPosition;
-        public string PlayerName;
-        public Dictionary<int, int> MarathonScore;
-
-        public LadderPlayer(string lPlayerName, int lPosition)
-        {
-            MarathonScore = new Dictionary<int, int>();
-            PlayerName = lPlayerName;
-            Position = lPosition;
-        }
-
-        public void AddWinToMarathonScore(string GameId)
-        {
-            int Week = int.Parse(GameId.Substring(GameId.IndexOf("W") + 1, GameId.IndexOf("G") - GameId.IndexOf("W") - 1));
-            int Game = int.Parse(GameId.Substring(GameId.IndexOf("G") + 1, GameId.Length - GameId.IndexOf("G") - 1));
-            if(Week >= 5)
-            {
-                if(MarathonScore.ContainsKey(Game))
-                {
-                    MarathonScore[Game] += 1;
-                }
-                else
-                {
-                    MarathonScore.Add(Game, 1);
-                }
-            }
-        }
     }
 }

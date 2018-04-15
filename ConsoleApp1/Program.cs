@@ -14,7 +14,7 @@ namespace ConsoleApp1
 {
     class Program
     {
-        static List<LadderPlayer> Ladder = new List<LadderPlayer>();
+        static Dictionary<string, int> Ladder = new Dictionary<string, int>();
 
         static void Main(string[] args)
         {
@@ -35,7 +35,8 @@ namespace ConsoleApp1
                     WriteGameToConsole(GameData);
                     foreach (GamePlayer gameplayer in GameData.GamePlayers.Where(x => x.rank == rank && x.dropped != 1).OrderBy(x => x.playername))
                     {
-                        Ladder.Add(new LadderPlayer(gameplayer.playername, Ladder.Count() + 1));
+                        Ladder.Add(gameplayer.playername, Ladder.Count() + 1);
+
                     }
                 }
             }
@@ -92,11 +93,12 @@ namespace ConsoleApp1
 
         static void WriteLadderToConsole()
         {
-            foreach (LadderPlayer LadderPlayer in Ladder.OrderBy(x => x.Position))
+            foreach (KeyValuePair<string, int> LadderEntry in Ladder.OrderBy(x => x.Value))
             {
-                Console.WriteLine(LadderPlayer.Position + ": " + LadderPlayer.PlayerName);
+                Console.WriteLine(LadderEntry.Value + ": " + LadderEntry.Key);
 
             }
+            Console.ReadKey();
 
         }
 
@@ -129,28 +131,18 @@ namespace ConsoleApp1
 
         static void AddGameToLadder(Game game)
         { 
-            foreach(LadderPlayer LadderPlayer in Ladder)
-            {
-                LadderPlayer.OldPosition = LadderPlayer.Position;
-            }
-
             // add everyone to the ladder in order
             int ProcessingOrder = 1;
 
             // if the player dropped in their first game, don't add them to the ladder
             foreach (GamePlayer gameplayer in game.GamePlayers.Where(x => x.dropped != 1).OrderBy(x => x.rank).ThenBy(x => x.playername))
             {
-                if (!Ladder.Exists(x => x.PlayerName == gameplayer.playername))
+                if (!Ladder.ContainsKey(gameplayer.playername))
                 {
-                    Ladder.Add(new LadderPlayer(gameplayer.playername, Ladder.Count() + 1));
+                    Ladder.Add(gameplayer.playername, Ladder.Count() + 1);
                 }
                 gameplayer.processingorder = ProcessingOrder;
                 ProcessingOrder++;
-
-                if (gameplayer.rank == 1)
-                {
-                    Ladder.Find(x => x.PlayerName == gameplayer.playername).AddWinToMarathonScore(game.id);
-                }
             }
 
             // give everyone a score 
@@ -198,9 +190,9 @@ namespace ConsoleApp1
                 */
 
                 // if the player dropped in their first game, they may not be on the ladder at all
-                if (Ladder.Exists(x => x.PlayerName == gameplayer.playername))
+                if (Ladder.ContainsKey(gameplayer.playername))
                 {
-                    gameplayer.currentposition = Ladder.Find(x => x.PlayerName == gameplayer.playername).Position;
+                    gameplayer.currentposition = Ladder[gameplayer.playername];
                     double NewPosAbsolute = Convert.ToDouble(gameplayer.currentposition) - gameplayer.score;
                     double NewPosRelative = Convert.ToDouble(gameplayer.currentposition) * (1 - gameplayer.score / 20);
                     if (gameplayer.score < 0)
@@ -226,7 +218,7 @@ namespace ConsoleApp1
             foreach (GamePlayer gameplayer in game.GamePlayers.OrderByDescending(x => x.processingorder))
             {
                 // if the player dropped in their first game, they may not be on the ladder at all
-                if (Ladder.Exists(x => x.PlayerName == gameplayer.playername))
+                if (Ladder.ContainsKey(gameplayer.playername))
                 { 
                     if (gameplayer.newposition > TotalPlayers)
                     {
@@ -238,34 +230,35 @@ namespace ConsoleApp1
                         gameplayer.newposition -= 1;
                     }
 
-                    Console.WriteLine(String.Format("{0} moves from {1} to {2}", gameplayer.playername, gameplayer.newposition, gameplayer.newposition));
-                    Ladder.Find(x => x.PlayerName == gameplayer.playername).Position = gameplayer.newposition;
+                    Console.WriteLine(String.Format("{0} moves from {1} to {2}", gameplayer.playername, Ladder[gameplayer.playername], gameplayer.newposition));
+                    Ladder[gameplayer.playername] = gameplayer.newposition;
                 }
             }
             
 
 
-            // update the rest of the ladder
+            // update whole ladder
             int newpos = 1;
-            foreach (LadderPlayer LadderPlayer in Ladder.OrderBy(x => x.Position))
+            foreach (KeyValuePair<string, int> player in Ladder.OrderBy(x => x.Value))
             {
-                if (game.GamePlayers.Select(x => x.playername).ToList().Contains(LadderPlayer.PlayerName))
+                if (game.GamePlayers.Select(x => x.playername).ToList().Contains(player.Key))
                     continue;
                     
                 while (game.GamePlayers.Where(x => x.newposition == newpos).Count() > 0)
                 {
                     newpos++;
                 }
-                if (LadderPlayer.Position != newpos)
+                if (Ladder[player.Key] != newpos)
                 {
-                    Console.WriteLine(String.Format("{0} moves from {1} to {2}", LadderPlayer.PlayerName, LadderPlayer.Position, newpos));
-                    LadderPlayer.Position = newpos;
+                    Console.WriteLine(String.Format("{0} moves from {1} to {2}", player.Key, Ladder[player.Key], newpos));
+                    Ladder[player.Key] = newpos;
                 }
                 newpos++;
             }
 
 
         }
-        
+
+
     }
 }

@@ -42,17 +42,17 @@
 
 		<td @(IsFirstGame ? "class=CurrentLadder" : "")>
 		<b>@(IsFirstGame ? "Latest Ladder" : "Intermediate Ladder")</b>
-			@foreach (LadderPlayer LadderPlayer in game.Ladder.OrderBy(x => x.Position))
+			@foreach (KeyValuePair<string, int> player in game.Ladder.OrderBy(x => x.Value))
 	{
-		<br />@(LadderPlayer.Position) <text> - </text> @(LadderPlayer.PlayerName)
+		<br />@(player.Value) <text> - </text> @(player.Key)
 }
 		</td>
 		}
 		<td>        
 			<b>Initial Ladder</b>
-			@foreach (LadderPlayer LadderPlayer in (Model.W1Games as List<Game>).First().Ladder.OrderBy(x => x.Position))
+			@foreach (KeyValuePair<string, int> player in (Model.W1Games as List<Game>).First().Ladder.OrderBy(x => x.Value))
 			{
-				<br />@(LadderPlayer.Position) <text> - </text> @(LadderPlayer.PlayerName)
+				<br />@(player.Value) <text> - </text> @(player.Key)
 			}
 
 		</td>
