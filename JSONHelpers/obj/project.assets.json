@@ -220,11 +220,11 @@
       "hideWarningsAndErrors": true
     },
     "restore": {
-      "projectUniqueName": "C:\\Users\\Chris\\Documents\\GitHub\\FireIceLadder\\JSONHelpers\\JSONHelpers.csproj",
+      "projectUniqueName": "C:\\Users\\Chris\\source\\repos\\FireIce\\JSONHelpers\\JSONHelpers.csproj",
       "projectName": "JSONHelpers",
-      "projectPath": "C:\\Users\\Chris\\Documents\\GitHub\\FireIceLadder\\JSONHelpers\\JSONHelpers.csproj",
+      "projectPath": "C:\\Users\\Chris\\source\\repos\\FireIce\\JSONHelpers\\JSONHelpers.csproj",
       "packagesPath": "C:\\Users\\Chris\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Chris\\Documents\\GitHub\\FireIceLadder\\JSONHelpers\\obj\\",
+      "outputPath": "C:\\Users\\Chris\\source\\repos\\FireIce\\JSONHelpers\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
