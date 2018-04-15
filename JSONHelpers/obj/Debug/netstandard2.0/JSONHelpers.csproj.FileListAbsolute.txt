@@ -7,3 +7,12 @@ C:\Users\Chris\source\repos\FireIce\JSONHelpers\bin\Debug\netstandard2.0\JSONHel
 C:\Users\Chris\source\repos\FireIce\JSONHelpers\obj\Debug\netstandard2.0\JSONHelpers.dll
 C:\Users\Chris\source\repos\FireIce\JSONHelpers\obj\Debug\netstandard2.0\JSONHelpers.pdb
 C:\Users\Chris\source\repos\FireIce\JSONHelpers\obj\Debug\netstandard2.0\JSONHelpers.csprojResolveAssemblyReference.cache
+C:\Users\Chris\Documents\GitHub\FireIceLadder\JSONHelpers\bin\Debug\netstandard2.0\JSONHelpers.deps.json
+C:\Users\Chris\Documents\GitHub\FireIceLadder\JSONHelpers\bin\Debug\netstandard2.0\JSONHelpers.dll
+C:\Users\Chris\Documents\GitHub\FireIceLadder\JSONHelpers\bin\Debug\netstandard2.0\JSONHelpers.pdb
+C:\Users\Chris\Documents\GitHub\FireIceLadder\JSONHelpers\obj\Debug\netstandard2.0\JSONHelpers.csprojResolveAssemblyReference.cache
+C:\Users\Chris\Documents\GitHub\FireIceLadder\JSONHelpers\obj\Debug\netstandard2.0\JSONHelpers.csproj.CoreCompileInputs.cache
+C:\Users\Chris\Documents\GitHub\FireIceLadder\JSONHelpers\obj\Debug\netstandard2.0\JSONHelpers.AssemblyInfoInputs.cache
+C:\Users\Chris\Documents\GitHub\FireIceLadder\JSONHelpers\obj\Debug\netstandard2.0\JSONHelpers.AssemblyInfo.cs
+C:\Users\Chris\Documents\GitHub\FireIceLadder\JSONHelpers\obj\Debug\netstandard2.0\JSONHelpers.dll
+C:\Users\Chris\Documents\GitHub\FireIceLadder\JSONHelpers\obj\Debug\netstandard2.0\JSONHelpers.pdb

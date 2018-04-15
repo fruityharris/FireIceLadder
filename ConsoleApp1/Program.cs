@@ -60,7 +60,11 @@ namespace ConsoleApp1
                 ProcessGame(GameData);
                 WriteGameToConsole(GameData);
                 AddGameToLadder(GameData);
+
+                // Sort ladder by marathon position and add to the game
+                Ladder.Sort(new MarathonComparer());
                 GameData.Ladder = Ladder;
+
                 WriteLadderToConsole();
                 SaveGame(GameData, GameProcessingOrder, "Games");
 
@@ -263,7 +267,6 @@ namespace ConsoleApp1
                 }
                 newpos++;
             }
-
 
         }
         

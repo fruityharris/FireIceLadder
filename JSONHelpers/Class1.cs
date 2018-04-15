@@ -9,6 +9,7 @@ namespace JSONHelpers
 {
     public class Methods
     {
+
         public static string TopLevelDirectory = "C:/FireIceLadder/Data";
 
         public static string GetLatestDirectory()
@@ -107,6 +108,40 @@ namespace JSONHelpers
             return Games;
 
         }
+
+        
+        public class MarathonComparer: IComparer<LadderPlayer>
+        {
+            public int Compare(LadderPlayer Playerx, LadderPlayer Playery)
+            {
+                Dictionary<int, int> x = Playerx.MarathonScore;
+                Dictionary<int, int> y = Playery.MarathonScore;
+                if (x.Count == 0 || y.Count == 0)
+                {
+                    return x.Count.CompareTo(y.Count);
+                }
+
+                int LargestGameNumber = Math.Max(x.Keys.Max(), y.Keys.Max());
+                int i = 1;
+                int lRet = 0;
+                while (lRet == 0 && i <= LargestGameNumber)
+                {
+                    if (x.ContainsKey(i) && y.ContainsKey(i))
+                    {
+                        lRet = x[i].CompareTo(y[i]);
+                    }
+                    else
+                    {
+                        // fun fact: boolean compareto() assumes true is lesser than false
+                        lRet = y.ContainsKey(i).CompareTo(x.ContainsKey(i));
+                    }
+                    i++;
+                }
+                return lRet;
+            }
+        }
+
+            
     }
 
     public class SnellmanData
@@ -174,4 +209,5 @@ namespace JSONHelpers
             }
         }
     }
+
 }

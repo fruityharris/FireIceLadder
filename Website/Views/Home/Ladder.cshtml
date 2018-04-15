@@ -22,14 +22,14 @@
 
 				@foreach (GamePlayer player in game.GamePlayers.OrderBy(x => x.rank))
 				{
-				<div class="playerinfo">
-					<span class="medal-circle medal-@player.rank">@(player.rank)</span><text> </text>
-					@if (player.faction != null && player.faction.Length > 0)
-					{
+					<div class="playerinfo">
+						<span class="medal-circle medal-@player.rank">@(player.rank)</span><text> </text>
+						@if (player.faction != null && player.faction.Length > 0)
+						{
 							<span class="faction-box @player.faction">@player.faction.Substring(0, 1).ToUpper()</span>
-					}
-							<span class="@(player.dropped==1 ? "dropped" : "")">@(player.playername)<text> (</text>@player.vp<text>)</text></span>
-				</div>
+						}
+						<span class="@(player.dropped==1 ? "dropped" : "")">@(player.playername)<text> (</text>@player.vp<text>)</text></span>
+					</div>
 				}
 			</td>
 		}
@@ -40,15 +40,15 @@
 		{
 			bool IsFirstGame = (game.id == Model.Games.First().id);
 
-		<td @(IsFirstGame ? "class=CurrentLadder" : "")>
-		<b>@(IsFirstGame ? "Latest Ladder" : "Intermediate Ladder")</b>
-			@foreach (LadderPlayer LadderPlayer in game.Ladder.OrderBy(x => x.Position))
-	{
-		<br />@(LadderPlayer.Position) <text> - </text> @(LadderPlayer.PlayerName)
-}
-		</td>
+			<td @(IsFirstGame ? "class=CurrentLadder" : "")>
+				<b>@(IsFirstGame ? "Latest Ladder" : "Intermediate Ladder")</b>
+				@foreach (LadderPlayer LadderPlayer in game.Ladder.OrderBy(x => x.Position))
+				{
+					<br />@(LadderPlayer.Position) <text> - </text> @(LadderPlayer.PlayerName)
+				}
+			</td>
 		}
-		<td>        
+		<td>
 			<b>Initial Ladder</b>
 			@foreach (LadderPlayer LadderPlayer in (Model.W1Games as List<Game>).First().Ladder.OrderBy(x => x.Position))
 			{
@@ -64,21 +64,21 @@
 <table>
 	<tr>
 		@foreach (Game game in (Model.RunningGames as List<Game>).OrderByDescending(x => x.round).ThenBy(x => x.id))
-	{
-		<td>
-			<a href="https://terra.snellman.net/game/@game.id">@game.id.Replace("FireIceLadder", "")</a><text> (R</text>@game.round<text>)</text>
-			@foreach (GamePlayer player in game.GamePlayers.OrderBy(x => x.processingorder))
-	{
-		<div class="playerinfo">
-			@if (player.faction != null && player.faction.Length > 0)
-	{
-		<span class="faction-box @player.faction">@player.faction.Substring(0, 1).ToUpper()</span>
-}
-		<span class="@(player.dropped==1 ? "dropped" : "")">@(player.playername)</span>
-</div>
-}
-		</td>
-}
+		{
+			<td>
+				<a href="https://terra.snellman.net/game/@game.id">@game.id.Replace("FireIceLadder", "")</a><text> (R</text>@game.round<text>)</text>
+				@foreach (GamePlayer player in game.GamePlayers.OrderBy(x => x.processingorder))
+				{
+					<div class="playerinfo">
+						@if (player.faction != null && player.faction.Length > 0)
+						{
+							<span class="faction-box @player.faction">@player.faction.Substring(0, 1).ToUpper()</span>
+						}
+						<span class="@(player.dropped==1 ? "dropped" : "")">@(player.playername)</span>
+					</div>
+				}
+			</td>
+		}
 	</tr>
 </table>
 
@@ -87,26 +87,46 @@
 	<table>
 		<tr>
 			@foreach (Game game in (Model.W1Games as List<Game>).OrderByDescending(x => x.seconds_since_update))
-	{
-		<td>
-			<a href="https://terra.snellman.net/game/@game.id">@game.id.Replace("FireIceLadder", "")</a>
-			@foreach (GamePlayer player in game.GamePlayers.OrderBy(x=>x.rank).ThenBy(x => x.playername))
-	{
-		<div class="playerinfo">
-			<span class="medal-circle medal-@player.rank">@(player.rank)</span><text> </text>
-			@if (player.faction != null && player.faction.Length > 0)
-	{
-		<span class="faction-box @player.faction">@player.faction.Substring(0, 1).ToUpper()</span><text> </text>
-}
-			@(player.playername)<text> (</text>@player.vp<text>)</text>
-		</div>
+			{
+				<td>
+					<a href="https://terra.snellman.net/game/@game.id">@game.id.Replace("FireIceLadder", "")</a>
+					@foreach (GamePlayer player in game.GamePlayers.OrderBy(x => x.rank).ThenBy(x => x.playername))
+					{
+						<div class="playerinfo">
+							<span class="medal-circle medal-@player.rank">@(player.rank)</span><text> </text>
+							@if (player.faction != null && player.faction.Length > 0)
+							{
+								<span class="faction-box @player.faction">@player.faction.Substring(0, 1).ToUpper()</span><text> </text>
+							}
+							@(player.playername)<text> (</text>@player.vp<text>)</text>
+						</div>
 
-}
-		</td>
-}
+					}
+				</td>
+			}
 		</tr>
 	</table>
 </div>
+
+<div id="MarathonTable">
+	<h2>Marathon</h2>
+	<table>
+		@foreach (LadderPlayer ladderplayer in (Model.Games.First().Ladder.Where(x => x.MarathonScore.Count > 0)))
+	{
+		<tr>
+			<td>
+				@ladderplayer.PlayerName
+			</td>
+			@for (int i = 1; i < 20; i++)
+			{
+				<td>@(ladderplayer.MarathonScore.ContainsKey(i) ? ladderplayer.MarathonScore[i] : 0)</td>
+			}
+	    </tr>
+			}
+		</tr>
+	</table>
+</div>
+
 
 <div id="Rules">
 	<h2>Rules</h2>
