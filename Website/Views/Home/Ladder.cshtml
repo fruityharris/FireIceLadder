@@ -107,7 +107,7 @@ else
 			<div class="GameNumber@(game.WeekNumber>4?game.GameNumber:0)">
 				<a href="https://terra.snellman.net/game/@game.id">@game.id.Replace("FireIceLadder", "")</a><text> (R</text>@game.round<text>)</text>
 		    </div>
-				@foreach (GamePlayer player in game.GamePlayers.OrderBy(x => x.processingorder))
+				@foreach (GamePlayer player in game.GamePlayers.OrderBy(x => x.playername))
 		{
 			<div class="playerinfo">
 				@if (player.faction != null && player.faction.Length > 0)
