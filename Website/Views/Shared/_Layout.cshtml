@@ -1,0 +1,166 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+	<style>
+		body {
+			font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+		}
+
+		table {
+			
+		}
+
+		td {
+			white-space: nowrap
+		}
+
+		div.playerinfo {
+		  margin-bottom:7px;
+		  margin-top:7px;
+		}
+
+		.medal-circle {
+			padding: 3px 8px;
+			border-radius: 50%;
+			font-size: 14px;
+		}
+
+		.medal-1 {
+			background-color: gold;
+		}
+
+		.medal-2 {
+			background-color: silver;
+		}
+
+		.medal-3 {
+			background-color: tan;
+		}
+
+		.medal-4 {
+			background-color:brown;
+		}
+
+
+
+		.faction-box {
+			display: inline;
+			padding: .2em .6em .3em;
+			font-size: 75%;
+			font-weight: 700;
+			line-height: 1;
+			color: #fff;
+			text-align: center;
+			white-space: nowrap;
+			vertical-align: baseline;
+			border-radius: .25em;
+		}
+
+		.alchemists, .darklings {
+			background-color: black;
+		}
+
+		.halflings, .cultists {
+			background-color: saddlebrown;
+		}
+
+		.nomads, .fakirs {
+			background-color: yellow;
+			color: black !important;
+		}
+
+		.giants, .chaosmagicians{
+			background-color: red;
+		}
+
+		.engineers, .dwarves{
+			background-color: gray;
+		}
+
+		.witches, .auren{
+			background-color: green;
+		}
+
+		.mermaids, .swarmlings{
+			background-color: blue;
+		}
+
+		.acolytes, .dragonlords{
+			background-color: orange;
+		}
+
+
+
+
+		.riverwalkers, .shapeshifters {
+			background: pink; /* For browsers that do not support gradients */
+			background: -webkit-linear-gradient(left, red, gray, green, blue, black, brown, yellow); /* For Safari 5.1 to 6.0 */
+			background: -o-linear-gradient(right, red, gray, green, blue, black, brown, yellow); /* For Opera 11.1 to 12.0 */
+			background: -moz-linear-gradient(right, red, gray, green, blue, black, brown, yellow); /* For Firefox 3.6 to 15 */
+			background: linear-gradient(to right, red, gray, green, blue, black, brown, yellow); /* Standard syntax (must be last) */
+		}
+
+		.yetis, .icemaidens {
+			background-color: white;
+			color:black !important;
+			border:1px solid black;
+		}
+
+		td.CurrentLadder {
+		  background-color:gray;
+		  font-weight:bold;
+		}
+
+		div.heading {
+			background-color: lightgrey;
+			font-size: 21px;
+			padding-left: 40px;
+			padding-right: 40px;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			border-radius: 6px;
+		}
+
+			div.heading h1 {
+				font-size: 63px;
+				font-weight: 500;
+			}
+
+		span.dropped {
+		    font-style: italic;
+			color: gray;
+		}
+		table, th, td {
+			vertical-align:top;
+			border:1px solid gray;
+			padding:8px;
+			border-collapse: collapse;
+		}
+
+		h2 {
+			display: block;
+			width: 100%;
+			padding: 0;
+			margin-bottom: 20px;
+			font-size: 30px;
+			line-height: inherit;
+			color: #333;
+			border: 0;
+			border-bottom: 1px solid #e5e5e5;
+		}
+
+	</style>
+</head>
+<body>
+    <div class="container body-content">
+        @RenderBody()
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
