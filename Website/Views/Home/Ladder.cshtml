@@ -69,14 +69,14 @@
 
 					@if (IsFirstGame)
 	{
-				<td>@(LadderPlayer.Position.ToString("00")) </td>
+				<td>@(LadderPlayer.Position) </td>
 				<td>
 					<a style="color:#0645AD" href="https://terra.snellman.net/player/@(LadderPlayer.PlayerName)">@(LadderPlayer.PlayerName)</a>
 				</td>
 }
 else
 {
-				<td>@(LadderPlayer.Position.ToString("00")) </td>
+				<td>@(LadderPlayer.Position) </td>
 				<td>@(LadderPlayer.PlayerName)</td>
 }
 
@@ -88,11 +88,19 @@ else
 		}
 		<td>
 			<b>Initial Ladder</b>
-			@foreach (LadderPlayer LadderPlayer in (Model.W1Games as List<Game>).First().Ladder.OrderBy(x => x.Position))
-			{
-				<br />@(LadderPlayer.Position) <text> - </text> @(LadderPlayer.PlayerName)
-			}
+			<table class="LadderTable">
 
+				@foreach (LadderPlayer LadderPlayer in (Model.W1Games as List<Game>).First().Ladder.OrderBy(x => x.Position))
+	{
+			<tr>
+
+
+
+			<td>@(LadderPlayer.Position) </td>
+			<td>@(LadderPlayer.PlayerName)</td>
+
+			</tr>}
+			</table>
 		</td>
 
 	</td>
