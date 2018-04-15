@@ -163,6 +163,22 @@ namespace JSONHelpers
         public List<int?> vps { get; set; }
         public List<int?> dropped { get; set; }
         public List<string> factions { get; set; }
+        public int LargestGameNumberInLadder;
+        public int GameNumber
+        {
+            get
+            {
+                return int.Parse(id.Substring(id.IndexOf("G") + 1, id.Length - id.IndexOf("G") - 1)); ;
+            }
+
+        }
+        public int WeekNumber
+        {
+            get
+            {
+                return int.Parse(id.Substring(id.IndexOf("W") + 1, id.IndexOf("G") - id.IndexOf("W") - 1));
+            }
+        }
     }
 
     public class GamePlayer
@@ -192,20 +208,15 @@ namespace JSONHelpers
             Position = lPosition;
         }
 
-        public void AddWinToMarathonScore(string GameId)
+        public void AddWinToMarathonScore(int GameNumber)
         {
-            int Week = int.Parse(GameId.Substring(GameId.IndexOf("W") + 1, GameId.IndexOf("G") - GameId.IndexOf("W") - 1));
-            int Game = int.Parse(GameId.Substring(GameId.IndexOf("G") + 1, GameId.Length - GameId.IndexOf("G") - 1));
-            if(Week >= 5)
+            if (MarathonScore.ContainsKey(GameNumber))
             {
-                if(MarathonScore.ContainsKey(Game))
-                {
-                    MarathonScore[Game] += 1;
-                }
-                else
-                {
-                    MarathonScore.Add(Game, 1);
-                }
+                MarathonScore[GameNumber] += 1;
+            }
+            else
+            {
+                MarathonScore.Add(GameNumber, 1);
             }
         }
     }

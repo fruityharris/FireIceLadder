@@ -15,10 +15,10 @@ namespace ConsoleApp1
     class Program
     {
         static List<LadderPlayer> Ladder = new List<LadderPlayer>();
+        static int LargestGameNumber = 0;
 
         static void Main(string[] args)
         {
-
             CreateNewDirectory();
             List<Game> W1Games = StoreAndReturnGamesFromSnellman("FireIceLadderW1G%", "W1games");
             List<Game> AllGames = StoreAndReturnGamesFromSnellman("FireIceLadderW%", "Allgames");
@@ -129,6 +129,8 @@ namespace ConsoleApp1
                 game.GamePlayers.Add(gp);
 
             }
+            LargestGameNumber = Math.Max(game.GameNumber, LargestGameNumber);
+            game.LargestGameNumberInLadder = LargestGameNumber;
         }
 
         static void AddGameToLadder(Game game)
@@ -151,9 +153,9 @@ namespace ConsoleApp1
                 gameplayer.processingorder = ProcessingOrder;
                 ProcessingOrder++;
 
-                if (gameplayer.rank == 1)
+                if (gameplayer.rank == 1 && game.WeekNumber >= 5)
                 {
-                    Ladder.Find(x => x.PlayerName == gameplayer.playername).AddWinToMarathonScore(game.id);
+                    Ladder.Find(x => x.PlayerName == gameplayer.playername).AddWinToMarathonScore(game.GameNumber);
                 }
             }
 
