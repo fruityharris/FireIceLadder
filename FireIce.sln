@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2027
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{7FBC83BC-8FEF-47AA-A373-30FCEDF1EA39}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Website", "Website\Website.csproj", "{DDFF3BC9-CE60-475A-A30B-F132DFF9E9A6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JSONHelpers", "JSONHelpers\JSONHelpers.csproj", "{0D36445B-BA52-4893-910B-1005D8849BD8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7FBC83BC-8FEF-47AA-A373-30FCEDF1EA39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FBC83BC-8FEF-47AA-A373-30FCEDF1EA39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FBC83BC-8FEF-47AA-A373-30FCEDF1EA39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FBC83BC-8FEF-47AA-A373-30FCEDF1EA39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDFF3BC9-CE60-475A-A30B-F132DFF9E9A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDFF3BC9-CE60-475A-A30B-F132DFF9E9A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDFF3BC9-CE60-475A-A30B-F132DFF9E9A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDFF3BC9-CE60-475A-A30B-F132DFF9E9A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D36445B-BA52-4893-910B-1005D8849BD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D36445B-BA52-4893-910B-1005D8849BD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D36445B-BA52-4893-910B-1005D8849BD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D36445B-BA52-4893-910B-1005D8849BD8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {89828A3C-EC36-43AC-A04F-0FC60874C953}
+	EndGlobalSection
+EndGlobal
