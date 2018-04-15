@@ -10,3 +10,7 @@ Terra Mystica Fire &amp; Ice Ladder website
 - [ ] Make "TopLevelDirectory" a config value
 - [ ] Change ConsoleApp from a console app to an api call (to be called by a button on the website and/or a regular job)
 - [ ] Redirect to /Home/Ladder
+- [ ] Remove ignored files: 
+  - `git rm -r --cached .`
+  - `git add -A`
+  - `git commit -am 'Removing ignored files'`
