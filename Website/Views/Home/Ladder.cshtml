@@ -160,12 +160,18 @@ else
 	<h2>Marathon</h2>
 	<table>
 		<tr>
+			<td></td>
+			<td colspan="@Model.Games.First().LargestGameNumberInLadder">
+				# of wins by game number (excluding first 4 weeks). One win in Game X beats any number of wins in Game X+1.
+			</td>
+		</tr>
+		<tr>
 			<td>
 				Player
 			</td>
 			@for (int i = 1; i <= Model.Games.First().LargestGameNumberInLadder; i++)
 	{
-		<td>G@(i)</td>
+		<td style="width:30px;">G@(i)</td>
 	}
 		</tr>
 		@foreach (LadderPlayer ladderplayer in (Model.Games.First().Ladder.Where(x => x.MarathonScore.Count > 0)))
@@ -176,7 +182,7 @@ else
 			</td>
 			@for (int i = 1; i <= Model.Games.First().LargestGameNumberInLadder; i++)
 			{
-				<td>@(ladderplayer.MarathonScore.ContainsKey(i) ? ladderplayer.MarathonScore[i] : 0)</td>
+				<td>@(ladderplayer.MarathonScore.ContainsKey(i) ? ladderplayer.MarathonScore[i].ToString() : "")</td>
 			}
 	    </tr>
 			}
