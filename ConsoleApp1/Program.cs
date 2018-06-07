@@ -104,13 +104,13 @@ namespace ConsoleApp1
 
         }
 
-        static Dictionary<int, int> GetScoresList(int playercount)
+        static Dictionary<int, double> GetScoresList(int playercount)
         {
             if(playercount == 3)
             {
-                return new Dictionary<int, int>() { { 1, 4 }, { 2, 1 }, { 3, -1 } };
+               return new Dictionary<int, double>() { { 1, 3 }, { 2, 0 }, { 3, -2 } };
             }
-            else return new Dictionary<int, int>() { { 1, 5 }, { 2, 2 }, { 3, 0 }, { 4, -1 } };
+            else return new Dictionary<int, double>() { { 1, 3.5 }, { 2, 0.5 }, { 3, -1.5 }, { 4, -2.5 } };
         }
 
         static void ProcessGame(Game game)
@@ -161,7 +161,7 @@ namespace ConsoleApp1
 
             // give everyone a score 
 
-            Dictionary<int, int> ScoresList = GetScoresList(game.usernames.Count());
+            Dictionary<int, double> ScoresList = GetScoresList(game.usernames.Count());
 
             for (int i = 1; i <= 4; i++)
             {
@@ -220,10 +220,10 @@ namespace ConsoleApp1
                     }
 
                     // resolve duplicates - shunt them down 1 if someone has the same position
-                    while (game.GamePlayers.Where(x => x.processingorder < gameplayer.processingorder && x.newposition == gameplayer.newposition).Count() > 0)
+/*                    while (game.GamePlayers.Where(x => x.processingorder < gameplayer.processingorder && x.newposition == gameplayer.newposition).Count() > 0)
                     {
                         gameplayer.newposition += 1;
-                    }
+                    }*/
                 }
             }
 
@@ -239,10 +239,10 @@ namespace ConsoleApp1
                         gameplayer.newposition = TotalPlayers;
                     }
 
-                    while (game.GamePlayers.Where(x => x.processingorder > gameplayer.processingorder && x.newposition == gameplayer.newposition).Count() > 0)
+          /*          while (game.GamePlayers.Where(x => x.processingorder > gameplayer.processingorder && x.newposition == gameplayer.newposition).Count() > 0)
                     {
                         gameplayer.newposition -= 1;
-                    }
+                    }*/
 
                     Console.WriteLine(String.Format("{0} moves from {1} to {2}", gameplayer.playername, gameplayer.newposition, gameplayer.newposition));
                     Ladder.Find(x => x.PlayerName == gameplayer.playername).Position = gameplayer.newposition;
@@ -252,7 +252,7 @@ namespace ConsoleApp1
 
 
             // update the rest of the ladder
-            int newpos = 1;
+    /*        int newpos = 1;
             foreach (LadderPlayer LadderPlayer in Ladder.OrderBy(x => x.Position))
             {
                 if (game.GamePlayers.Select(x => x.playername).ToList().Contains(LadderPlayer.PlayerName))
@@ -268,7 +268,7 @@ namespace ConsoleApp1
                     LadderPlayer.Position = newpos;
                 }
                 newpos++;
-            }
+            }*/
 
         }
         
