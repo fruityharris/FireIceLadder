@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using JSONHelpers;
-using static JSONHelpers.Methods;
+using MongoDB.Driver;
+using MongoDB.Bson;
+using MongoDB.Driver.Core;
+using MongoDB.Bson.Serialization;
 
 
 namespace Website.Controllers
 {
-    public class HomeController : Controller
+
+        public class HomeController : Controller
     {
+        public IMongoDatabase MongoDatabase;
         public ActionResult Index()
         {
             return View();
@@ -18,11 +22,13 @@ namespace Website.Controllers
 
         public ActionResult Ladder()
         {
-            Models.Ladder ladder = new Models.Ladder();
-            ladder.Games = GetGamesFromFilestore("Games");
-            ladder.W1Games = GetGamesFromFilestore("W1Games");
-            ladder.RunningGames = GetGamesFromFilestore("RunningGames");
-            return View(ladder);
+            var connectionString = "mongodb+srv://Ladder:1_Yatsura@cluster0-j66ax.mongodb.net/admin?retryWrites=true";
+            var client = new MongoClient(connectionString);
+            MongoDatabase = client.GetDatabase("FireIceLadder");
+            IMongoCollection<BsonDocument> collection = MongoDatabase.GetCollection<BsonDocument>("games");
+            var document = collection.Find(x => true).First();
+            return View(new Models.Ladder(document));
+
         }
 
         public ActionResult About()

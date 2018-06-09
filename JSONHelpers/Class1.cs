@@ -5,6 +5,9 @@ using System.IO;
 using System.Net;
 using Newtonsoft.Json;
 
+
+
+
 namespace JSONHelpers
 {
     public class Methods
@@ -37,7 +40,7 @@ namespace JSONHelpers
         public static void SaveGame(Game game, int ProcessingOrder, string SubFolder)
         {
 
-            string filepath = GetLatestSubdirectory(SubFolder) + "/" + ProcessingOrder.ToString("D6") + "_" + game.id;
+            string filepath = GetLatestSubdirectory(SubFolder) + "/" + ProcessingOrder.ToString("D6") + "_" + game.name;
 
             using (StreamWriter file = File.CreateText(filepath))
             {
@@ -156,7 +159,7 @@ namespace JSONHelpers
         public float seconds_since_update { get; set; }
         public List<string> usernames { get; set; }
         public List<int?> ranks { get; set; }
-        public string id { get; set; }
+        public string name { get; set; }
         public List<GamePlayer> GamePlayers { get; set; }
         public List<LadderPlayer> Ladder { get; set; }
         public int? round { get; set; }
@@ -168,7 +171,7 @@ namespace JSONHelpers
         {
             get
             {
-                return int.Parse(id.Substring(id.IndexOf("G") + 1, id.Length - id.IndexOf("G") - 1)); ;
+                return int.Parse(name.Substring(name.IndexOf("G") + 1, name.Length - name.IndexOf("G") - 1)); ;
             }
 
         }
@@ -176,7 +179,7 @@ namespace JSONHelpers
         {
             get
             {
-                return int.Parse(id.Substring(id.IndexOf("W") + 1, id.IndexOf("G") - id.IndexOf("W") - 1));
+                return int.Parse(name.Substring(name.IndexOf("W") + 1, name.IndexOf("G") - name.IndexOf("W") - 1));
             }
         }
     }

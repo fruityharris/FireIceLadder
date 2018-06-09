@@ -1,5 +1,5 @@
 ﻿@using System.Linq;
-@using JSONHelpers;
+@using Website.Models
 @model Website.Models.Ladder
 
 
@@ -18,7 +18,7 @@
 		{
 			<td >
 				<div class="GameNumber@(game.WeekNumber>4?game.GameNumber:0)">
-					<a href="https://terra.snellman.net/game/@game.id">@game.id.Replace("FireIceLadder", "")</a>
+					<a href="https://terra.snellman.net/game/@game.name">@game.name.Replace("FireIceLadder", "")</a>
 				</div>
 
 				@foreach (GamePlayer player in game.GamePlayers.OrderBy(x => x.rank))
@@ -39,7 +39,7 @@
 	<tr>
 		@foreach (Game game in Model.Games)
 		{
-			bool IsFirstGame = (game.id == Model.Games.First().id);
+			bool IsFirstGame = (game.name == Model.Games.First().name);
 
 		<td @(IsFirstGame ? "class=CurrentLadder" : "")>
 			
@@ -113,7 +113,7 @@ else
 		{
 		<td>
 			<div class="GameNumber@(game.WeekNumber>4?game.GameNumber:0)">
-				<a href="https://terra.snellman.net/game/@game.id">@game.id.Replace("FireIceLadder", "")</a><text> (R</text>@game.round<text>)</text>
+				<a href="https://terra.snellman.net/game/@game.name">@game.name.Replace("FireIceLadder", "")</a><text> (R</text>@game.round<text>)</text>
 		    </div>
 				@foreach (GamePlayer player in game.GamePlayers.OrderBy(x => x.playername))
 		{
@@ -137,7 +137,7 @@ else
 			@foreach (Game game in (Model.W1Games as List<Game>).OrderByDescending(x => x.seconds_since_update))
 			{
 				<td>
-					<a href="https://terra.snellman.net/game/@game.id">@game.id.Replace("FireIceLadder", "")</a>
+					<a href="https://terra.snellman.net/game/@game.name">@game.name.Replace("FireIceLadder", "")</a>
 					@foreach (GamePlayer player in game.GamePlayers.OrderBy(x => x.rank).ThenBy(x => x.playername))
 					{
 						<div class="playerinfo">

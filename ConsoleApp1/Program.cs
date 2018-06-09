@@ -89,7 +89,7 @@ namespace ConsoleApp1
 
         static void WriteGameToConsole(Game game)
         {
-            Console.WriteLine(game.id + ": " + game.seconds_since_update.ToString());
+            Console.WriteLine(game.name + ": " + game.seconds_since_update.ToString());
             foreach (GamePlayer gameplayer in game.GamePlayers)
             {
                 Console.WriteLine(String.Format("{0} - pos: {1}{2}", gameplayer.playername, gameplayer.rank, gameplayer.dropped == 1 ? " dropped" : ""));
