@@ -196,7 +196,7 @@ else
 	<h3>Ladder Structure</h3>
 	<p>
 		New games are started every 2 weeks. (Roughly every other Sunday, but bear in mind this is manually administered so may have to fit round my schedule a little)<br />
-		Opponents are determined by ladder position - the top four active players are drawn together, and so on. (Until the ladder is inititalised by W1 games, opponents will be determined randomly).<br />
+		Opponents are determined by ladder position - the top four active players are drawn together, and so on.<br />
 		The following four maps are used with equal frequency: Original, Fire and Ice Side 1, Loon Lakes, Fjords.<br />
 		Games will be 4p, with the bottom 0-3 games being 3p as required.<br />
 		Games are created with the following options: Mini expansion, Shipping bonus tile, Temple round scoring tile, Extra final scoring tile, Turn order determined by passing order, Fire & Ice expansion, Automatic email notifications.<br />
@@ -206,7 +206,7 @@ else
 
 	<h3>Determining Ladder Position - details</h3>
 	<p>
-		To determine ladder positions, the following algorithm is applied to each game in order of completion:<br />
+		To determine ladder positions, the following algorithm is applied to each game in a pre-defined order (by gameweek, higher numbered games first - but note that weeks 2-7 are instead applied in finish order for legacy reasons; W1 was the initialisation week):<br />
 		Anyone in the game who's not yet on the ladder, gets added at the bottom of the ladder, in order of finishing position (alphabetically in the case of a tie).<br />
 		Everyone in the game gets their new ladder position calculated as follows (L is current ladder position, S is the score as determined by the table below).<br />
 		For positive S: New L = Floor(Min(L *(1 - S/20), L - S)) <br />

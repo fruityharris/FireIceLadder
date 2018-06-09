@@ -53,8 +53,10 @@ namespace ConsoleApp1
 
 
             int GameProcessingOrder = 0;
-            foreach (Game GameData in AllGames.Where(x => (x.finished == 1 && x.aborted == 0 && x.WeekNumber > 1))
-                                                                    .OrderBy(x => x.WeekNumber).ThenByDescending(x => x.GameNumber))
+            foreach (Game GameData in AllGames.Where(x => (x.finished == 1 && x.aborted == 0 && x.WeekNumber > 1 && x.WeekNumber < 8))
+                                                                    .OrderByDescending(x => x.seconds_since_update)
+                                                                    .Concat(AllGames.Where(x => (x.finished == 1 && x.aborted == 0 && x.WeekNumber >= 8))
+                                                                    .OrderBy(x => x.WeekNumber).ThenByDescending(x => x.GameNumber)))
             {
                 GameProcessingOrder += 1;
                 ProcessGame(GameData);
