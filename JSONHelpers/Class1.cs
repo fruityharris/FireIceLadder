@@ -128,7 +128,7 @@ namespace JSONHelpers
                 {
                     if (x.ContainsKey(i) && y.ContainsKey(i))
                     {
-                        lRet = x[i].CompareTo(y[i]);
+                        lRet = y[i].CompareTo(x[i]);
                     }
                     else
                     {
