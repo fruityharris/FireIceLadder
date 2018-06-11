@@ -7,9 +7,53 @@ using MongoDB.Bson;
 using MongoDB.Driver.Core;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson.Serialization.Options;
 
 namespace Website.MiddleTier
 {
+    public class SnellmanGame
+    {
+        public string id { get; set; }
+        public int? finished { get; set; }
+        public int? aborted { get; set; }
+        public float seconds_since_update { get; set; }
+        public List<string> usernames { get; set; }
+        public List<int?> ranks { get; set; }
+        public int? round { get; set; }
+        public List<int?> vps { get; set; }
+        public List<int?> dropped { get; set; }
+        public List<string> factions { get; set; }
+
+
+
+        public Game ConvertToGame()
+        {
+            var obj = this;
+            Game output = new Game()
+            {
+                name = obj.id,
+                finished = obj.finished,
+                aborted = obj.aborted,
+                seconds_since_update = obj.seconds_since_update,
+                usernames = obj.usernames,
+                ranks = obj.ranks,
+                round = obj.round,
+                vps = obj.vps,
+                dropped = obj.dropped,
+                factions = obj.factions
+            };
+            return output;
+        }
+    }
+
+
+    [BsonIgnoreExtraElements]
+    public class SnellmanData
+    {
+        public List<SnellmanGame> games { get; set; }
+    }
+
+
     [BsonIgnoreExtraElements]
     public class Game
     {
@@ -65,6 +109,7 @@ namespace Website.MiddleTier
         public int Position;
         public int? OldPosition;
         public string PlayerName;
+        [BsonDictionaryOptions(DictionaryRepresentation.ArrayOfArrays)]
         public Dictionary<int, int> MarathonScore;
 
         public LadderPlayer(string lPlayerName, int lPosition)

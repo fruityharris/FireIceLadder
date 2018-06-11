@@ -16,11 +16,14 @@ namespace Website.Models
         public List<Game> Games;
         public List<Game> W1Games;
         public List<Game> RunningGames;
-        public Ladder(BsonDocument document)
+        public Ladder(List<BsonDocument> documents)
         {
-            Game game = BsonSerializer.Deserialize<Game>(document);
             Games = new List<Game>();
-            Games.Add(game);
+            foreach (var document in documents)
+            {
+                Game game = BsonSerializer.Deserialize<Game>(document);
+                Games.Add(game);
+            }
             W1Games = Games;
             RunningGames = Games;
 

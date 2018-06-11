@@ -10,7 +10,7 @@ using MongoDB.Driver.Core;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.IO;
-
+using Newtonsoft.Json;
 
 namespace Website.MiddleTier
 {
@@ -23,16 +23,16 @@ namespace Website.MiddleTier
             string url = "http://terra.snellman.net/app/list-games/by-pattern/" + Pattern;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             WebResponse response = request.GetResponse();
-            string json;
+
+            SnellmanData Data;
+
             using (var sr = new StreamReader(response.GetResponseStream()))
             {
-                json = sr.ReadToEnd();
+            JsonSerializer serializer = new JsonSerializer();
+            Data = (SnellmanData)serializer.Deserialize(sr, typeof(SnellmanData));
             }
 
-
-            List<Game> Games = BsonSerializer.Deserialize<List<Game>>(json);
-
-            return Games;
+            return Data.games.Select(X => X.ConvertToGame()).ToList();
         }
 
         public static void SaveGame(Game game, int ProcessingOrder, string CollectionName, IMongoDatabase db)
@@ -91,7 +91,6 @@ namespace Website.MiddleTier
                 foreach (Game GameData in FinishedW1Games)
                 {
                     ProcessGame(GameData);
-                    WriteGameToConsole(GameData);
                     foreach (GamePlayer gameplayer in GameData.GamePlayers.Where(x => x.rank == rank && x.dropped != 1).OrderBy(x => x.playername))
                     {
                         Ladder.Add(new LadderPlayer(gameplayer.playername, Ladder.Count() + 1));
@@ -107,8 +106,7 @@ namespace Website.MiddleTier
                 GameData.Ladder = Ladder;
                 SaveGame(GameData, W1ProcessingOrder, "W1Games", db);
             }
-
-            WriteLadderToConsole();
+            
 
 
             int GameProcessingOrder = 0;
@@ -119,14 +117,12 @@ namespace Website.MiddleTier
             {
                 GameProcessingOrder += 1;
                 ProcessGame(GameData);
-                WriteGameToConsole(GameData);
                 AddGameToLadder(GameData);
 
                 // Sort ladder by marathon position and add to the game
                 Ladder.Sort(new MarathonComparer());
                 GameData.Ladder = Ladder;
-
-                WriteLadderToConsole();
+                
                 SaveGame(GameData, GameProcessingOrder, "Games", db);
 
             }
@@ -136,34 +132,13 @@ namespace Website.MiddleTier
             {
                 GameProcessingOrder++;
                 ProcessGame(GameData);
-                WriteGameToConsole(GameData);
                 SaveGame(GameData, GameProcessingOrder, "RunningGames", db);
 
             }
-
-            Console.ReadKey();
+            
         }
 
 
-
-        static void WriteGameToConsole(Game game)
-        {
-            Console.WriteLine(game.name + ": " + game.seconds_since_update.ToString());
-            foreach (GamePlayer gameplayer in game.GamePlayers)
-            {
-                Console.WriteLine(String.Format("{0} - pos: {1}{2}", gameplayer.playername, gameplayer.rank, gameplayer.dropped == 1 ? " dropped" : ""));
-            }
-        }
-
-        static void WriteLadderToConsole()
-        {
-            foreach (LadderPlayer LadderPlayer in Ladder.OrderBy(x => x.Position))
-            {
-                Console.WriteLine(LadderPlayer.Position + ": " + LadderPlayer.PlayerName);
-
-            }
-
-        }
 
         static Dictionary<int, int> GetScoresList(int playercount)
         {
@@ -241,7 +216,6 @@ namespace Website.MiddleTier
                 foreach (GamePlayer gameplayer in game.GamePlayers.Where(x => x.rank == i))
                 {
                     gameplayer.score = gameplayer.dropped == 1 ? -4 : score;
-                    Console.WriteLine(gameplayer.playername + ": " + score);
                 }
 
 
@@ -305,7 +279,6 @@ namespace Website.MiddleTier
                         gameplayer.newposition -= 1;
                     }
 
-                    Console.WriteLine(String.Format("{0} moves from {1} to {2}", gameplayer.playername, gameplayer.newposition, gameplayer.newposition));
                     Ladder.Find(x => x.PlayerName == gameplayer.playername).Position = gameplayer.newposition;
                 }
             }
@@ -325,7 +298,6 @@ namespace Website.MiddleTier
                 }
                 if (LadderPlayer.Position != newpos)
                 {
-                    Console.WriteLine(String.Format("{0} moves from {1} to {2}", LadderPlayer.PlayerName, LadderPlayer.Position, newpos));
                     LadderPlayer.Position = newpos;
                 }
                 newpos++;

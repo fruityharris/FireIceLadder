@@ -39,9 +39,9 @@ namespace Website.Controllers
 
         public ActionResult Ladder()
         {
-            IMongoCollection<BsonDocument> collection = MongoDatabase.GetCollection<BsonDocument>("games");
-            var document = collection.Find(x => true).First();
-            return View(new Models.Ladder(document));
+            IMongoCollection<BsonDocument> collection = MongoDatabase.GetCollection<BsonDocument>("Games");
+            var documents = collection.Find(x => true).ToList();
+            return View(new Models.Ladder(documents));
 
         }
 
