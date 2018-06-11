@@ -16,20 +16,29 @@ namespace Website.Models
         public List<Game> Games;
         public List<Game> W1Games;
         public List<Game> RunningGames;
-        public Ladder(List<BsonDocument> documents)
+        public Ladder(List<BsonDocument> AllGamesDoc, List<BsonDocument> W1GamesDoc, List<BsonDocument> RunningGamesDoc)
         {
             Games = new List<Game>();
-            foreach (var document in documents)
+            W1Games = new List<Game>();
+            RunningGames = new List<Game>();
+            foreach (var document in AllGamesDoc.OrderByDescending(x => x))
             {
                 Game game = BsonSerializer.Deserialize<Game>(document);
                 Games.Add(game);
             }
-            W1Games = Games;
-            RunningGames = Games;
 
-            //            ladder.Games = GetGamesFromFilestore("Games");
-            //ladder.W1Games = GetGamesFromFilestore("W1Games");
-            //ladder.RunningGames = GetGamesFromFilestore("RunningGames");
+            foreach (var document in W1GamesDoc)
+            {
+                Game game = BsonSerializer.Deserialize<Game>(document);
+                W1Games.Add(game);
+            }
+
+            foreach (var document in RunningGamesDoc)
+            {
+                Game game = BsonSerializer.Deserialize<Game>(document);
+                RunningGames.Add(game);
+            }
+
 
 
         }

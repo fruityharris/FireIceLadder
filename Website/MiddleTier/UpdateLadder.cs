@@ -79,6 +79,9 @@ namespace Website.MiddleTier
 
         public static void Update(IMongoDatabase db)
         {
+            db.DropCollection("Games");
+            db.DropCollection("W1Games");
+            db.DropCollection("RunningGames");
             List<Game> W1Games = GetGamesFromSnellman("FireIceLadderW1G%");
             List<Game> AllGames = GetGamesFromSnellman("FireIceLadderW%");
 
