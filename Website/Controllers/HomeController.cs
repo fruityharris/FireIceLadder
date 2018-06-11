@@ -14,7 +14,24 @@ namespace Website.Controllers
 
         public class HomeController : Controller
     {
-        public IMongoDatabase MongoDatabase;
+        public IMongoDatabase MongoDatabase
+        {
+            get {
+                if (mMongoDatabase == null)
+                    {
+                    var connectionString = "mongodb+srv://Ladder:1_Yatsura@cluster0-j66ax.mongodb.net/admin?retryWrites=true";
+                    var client = new MongoClient(connectionString);
+                    mMongoDatabase = client.GetDatabase("FireIceLadder");
+
+                }
+
+                return mMongoDatabase;
+            }
+        }
+
+        private IMongoDatabase mMongoDatabase;
+
+
         public ActionResult Index()
         {
             return View();
@@ -22,9 +39,6 @@ namespace Website.Controllers
 
         public ActionResult Ladder()
         {
-            var connectionString = "mongodb+srv://Ladder:1_Yatsura@cluster0-j66ax.mongodb.net/admin?retryWrites=true";
-            var client = new MongoClient(connectionString);
-            MongoDatabase = client.GetDatabase("FireIceLadder");
             IMongoCollection<BsonDocument> collection = MongoDatabase.GetCollection<BsonDocument>("games");
             var document = collection.Find(x => true).First();
             return View(new Models.Ladder(document));
@@ -43,6 +57,13 @@ namespace Website.Controllers
             ViewBag.Message = "Your contact page.";
 
             return View();
+        }
+
+        public ActionResult UpdateLadder()
+        {
+            MiddleTier.UpdateLadder.Update(MongoDatabase);
+
+            return RedirectToRoute(new { controller = "Home", action = "Ladder" });
         }
     }
 }
