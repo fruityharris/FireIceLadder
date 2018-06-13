@@ -91,7 +91,7 @@ namespace Website.MiddleTier
 
             for (int rank = 1; rank < 5; rank++)
             {
-                foreach (Game GameData in FinishedW1Games)
+                foreach (Game GameData in FinishedW1Games.OrderByDescending(x => x.seconds_since_update))
                 {
                     ProcessGame(GameData);
                     foreach (GamePlayer gameplayer in GameData.GamePlayers.Where(x => x.rank == rank && x.dropped != 1).OrderBy(x => x.playername))
