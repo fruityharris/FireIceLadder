@@ -22,6 +22,7 @@
 				<div class="GameNumber@(game.WeekNumber>4?game.GameNumber:0)">
 					<a href="https://terra.snellman.net/game/@game.name">@game.name.Replace("FireIceLadder", "")</a>
 				</div>
+				<div style="font-size:smaller;" class="Finished@(Math.Floor(game.seconds_since_update/86400))">Finished @(new TimeSpan(0, 0, (int)(game.seconds_since_update)).ToString("%d"))d ago</div>
 
 				@foreach (GamePlayer player in game.GamePlayers.OrderBy(x => x.rank))
 				{
