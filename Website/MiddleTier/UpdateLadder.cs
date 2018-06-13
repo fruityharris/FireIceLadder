@@ -105,7 +105,7 @@ namespace Website.MiddleTier
 
 
             int W1ProcessingOrder = 0;
-            foreach (Game GameData in FinishedW1Games.OrderByDescending(x => x.seconds_since_update))
+            foreach (Game GameData in FinishedW1Games)
             {
                 W1ProcessingOrder++;
                 GameData.Ladder = Ladder;
