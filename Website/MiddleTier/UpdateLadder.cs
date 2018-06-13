@@ -82,6 +82,8 @@ namespace Website.MiddleTier
             db.DropCollection("Games");
             db.DropCollection("W1Games");
             db.DropCollection("RunningGames");
+            Ladder.Clear();
+
             List<Game> W1Games = GetGamesFromSnellman("FireIceLadderW1G%");
             List<Game> AllGames = GetGamesFromSnellman("FireIceLadderW%");
 
