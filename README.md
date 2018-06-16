@@ -2,15 +2,8 @@
 Terra Mystica Fire &amp; Ice Ladder website
 
 ## Notes
-- In JSONHelpers/Class1.cs there's a variable called "TopLevelDirectory" which determines where on the server the data and logs get stored. 
-- The ConsoleApp project is what actually creates/updates the data (by pulling things from snellman). It just needs to be run with no params. 
-- For running the code: the URL is /Home/Ladder
+ - connectionstrings.config needs a "MongoDB" entry - you'll need a MongoDB replicaset for development. 
  
 ## TODO
-- [ ] Make "TopLevelDirectory" a config value
-- [ ] Change ConsoleApp from a console app to an api call (to be called by a button on the website and/or a regular job)
-- [ ] Redirect to /Home/Ladder
-- [ ] Remove ignored files: 
-  - `git rm -r --cached .`
-  - `git add -A`
-  - `git commit -am 'Removing ignored files'`
+- [ ] Get myself a MongoDB replicaset so I'm not developing on live...
+- [ ] Fix it so that git doesn't keep asking to commit connectionstrings.config https://gist.github.com/canton7/1423106
