@@ -103,6 +103,15 @@ namespace Website.MiddleTier
     }
 
 
+    public class PlayerGameInfo
+    {
+        public int GameNumber;
+        public int WeekNumber;
+        public bool Finisdhed;
+        public bool Dropped;
+        public string Faction;
+        public int? Rank;
+    }
 
     public class LadderPlayer
     {
@@ -110,12 +119,12 @@ namespace Website.MiddleTier
         public int? OldPosition;
         public string PlayerName;
         [BsonDictionaryOptions(DictionaryRepresentation.ArrayOfArrays)]
-        public Dictionary<int, int> MarathonScore;
+        public Dictionary<int, PlayerGameInfo> Games;
         public int gmgMarathonScore;
 
         public LadderPlayer(string lPlayerName, int lPosition)
         {
-            MarathonScore = new Dictionary<int, int>();
+            Games = new Dictionary<int, PlayerGameInfo>();
             PlayerName = lPlayerName;
             Position = lPosition;
             gmgMarathonScore = 0;
@@ -126,17 +135,11 @@ namespace Website.MiddleTier
             gmgMarathonScore += 1000 / (GameNumber * rank);
         }
 
-        public void AddWinToMarathonScore(int GameNumber)
+        public void AddGameInfo(PlayerGameInfo Info)
         {
-            if (MarathonScore.ContainsKey(GameNumber))
-            {
-                MarathonScore[GameNumber] += 1;
-            }
-            else
-            {
-                MarathonScore.Add(GameNumber, 1);
-            }
+            Games.Add(Info.WeekNumber, Info);
         }
+        
     }
     
 }

@@ -22,7 +22,7 @@ namespace Website.Controllers
 
                     string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["MongoDB"].ToString(); 
                     var client = new MongoClient(connectionString);
-                    mMongoDatabase = client.GetDatabase("FireIceLadder");
+                    mMongoDatabase = client.GetDatabase(System.Configuration.ConfigurationManager.AppSettings["DBName"].ToString());
 
                 }
 

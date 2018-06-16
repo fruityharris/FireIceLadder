@@ -159,49 +159,11 @@
 	</table>
 </div>
 
-<div id="MarathonTable">
-	<h2>Marathon</h2>
-	<table>
-		<tr>
-			<td></td>
-			<td colspan="@Model.Games.First().LargestGameNumberInLadder">
-				# of wins by game number (excluding first 4 weeks). One win in Game X beats any number of wins in Game X+1.
-			</td>
-		</tr>
-		<tr>
-			<td>
-				Player
-			</td>
-			@for (int i = 1; i <= Model.Games.First().LargestGameNumberInLadder; i++)
-			{
-				<td style="width:30px;">G@(i)</td>
-			}
-		</tr>
-		@foreach (LadderPlayer ladderplayer in (Model.Games.First().Ladder.Where(x => x.MarathonScore.Count > 0)))
-		{
-			<tr>
-				<td>
-					@ladderplayer.PlayerName
-				</td>
-				@for (int i = 1; i <= Model.Games.First().LargestGameNumberInLadder; i++)
-				{
-					<td>@(ladderplayer.MarathonScore.ContainsKey(i) ? ladderplayer.MarathonScore[i].ToString() : "")</td>
-				}
-			</tr>
-		}
-		</tr>
-	</table>
-</div>
 
 <div id="MarathonTable">
 	<h2>gmg Marathon proposal</h2>
+	<p>Score = sum of (1000/(game number * rank))</p>
 	<table>
-		<tr>
-			<td></td>
-			<td colspan="@Model.Games.First().LargestGameNumberInLadder">
-				sum of (1000/(game number * rank))
-			</td>
-		</tr>
 		<tr>
 			<td>
 				Player
@@ -209,9 +171,9 @@
 			<td>
 				Score
 			</td>
-			@for (int i = 1; i <= Model.Games.First().LargestGameNumberInLadder; i++)
+			@for (int i = 0; i < Model.Games.First().WeekNumber; i++)
 	{
-		<td style="width:30px;">G@(i)</td>
+		<td style="width:30px;">W@(Model.Games.First().WeekNumber - i)</td>
 }
 		</tr>
 		@foreach (LadderPlayer ladderplayer in (Model.Games.First().Ladder.Where(x => x.gmgMarathonScore > 0).OrderByDescending(x => x.gmgMarathonScore)))
@@ -223,9 +185,33 @@
 			<td>
 				@ladderplayer.gmgMarathonScore
 			</td>
-			@for (int i = 1; i <= Model.Games.First().LargestGameNumberInLadder; i++)
+			@for (int i = 0; i < Model.Games.First().WeekNumber; i++)
 	{
-		<td>@(ladderplayer.MarathonScore.ContainsKey(i) ? ladderplayer.MarathonScore[i].ToString() : "")</td>
+			<td>
+				@if (ladderplayer.Games.ContainsKey(Model.Games.First().WeekNumber - i))
+	{
+		PlayerGameInfo Info = ladderplayer.Games[Model.Games.First().WeekNumber - i];
+			<text>
+
+				<div class="playerinfo">
+
+					<span class="faction-box" style="background-color:deepskyblue;text-decoration:none">
+						<a href="https://terra.snellman.net/game/FireIceLadderW@(Model.Games.First().WeekNumber - i)G@(Info.GameNumber)">
+							G@(Info.GameNumber)
+
+						</a>
+					</span>&nbsp;
+					<span class="medal-circle medal-@Info.Rank">@(Info.Rank)</span><text>&nbsp;</text>
+					@if (Info.Faction != null && Info.Faction.Length > 0)
+	{
+				<span class="faction-box @Info.Faction">@Info.Faction.Substring(0, 1).ToUpper()</span>
+}
+				</div>
+				</text>
+
+
+}
+			</td>
 }
 		</tr>
 		}

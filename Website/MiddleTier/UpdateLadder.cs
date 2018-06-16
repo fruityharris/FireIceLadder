@@ -44,38 +44,6 @@ namespace Website.MiddleTier
         static List<LadderPlayer> Ladder = new List<LadderPlayer>();
         static int LargestGameNumber = 0;
 
-        public class MarathonComparer : IComparer<LadderPlayer>
-        {
-            public int Compare(LadderPlayer Playerx, LadderPlayer Playery)
-            {
-                Dictionary<int, int> x = Playerx.MarathonScore;
-                Dictionary<int, int> y = Playery.MarathonScore;
-                if (x.Count == 0 || y.Count == 0)
-                {
-                    return x.Count.CompareTo(y.Count);
-                }
-
-                int LargestGameNumber = Math.Max(x.Keys.Max(), y.Keys.Max());
-                int i = 1;
-                int lRet = 0;
-                while (lRet == 0 && i <= LargestGameNumber)
-                {
-                    if (x.ContainsKey(i) && y.ContainsKey(i))
-                    {
-                        lRet = y[i].CompareTo(x[i]);
-                    }
-                    else
-                    {
-                        // fun fact: boolean compareto() assumes true is lesser than false
-                        lRet = y.ContainsKey(i).CompareTo(x.ContainsKey(i));
-                    }
-                    i++;
-                }
-                return lRet;
-            }
-        }
-
-
 
         public static void Update(IMongoDatabase db)
         {
@@ -125,7 +93,6 @@ namespace Website.MiddleTier
                 AddGameToLadder(GameData);
 
                 // Sort ladder by marathon position and add to the game
-                Ladder.Sort(new MarathonComparer());
                 GameData.Ladder = Ladder;
                 
                 SaveGame(GameData, GameProcessingOrder, "Games", db);
@@ -194,10 +161,15 @@ namespace Website.MiddleTier
                 gameplayer.processingorder = ProcessingOrder;
                 ProcessingOrder++;
 
-                if (gameplayer.rank == 1 && game.WeekNumber >= 5)
-                {
-                    Ladder.Find(x => x.PlayerName == gameplayer.playername).AddWinToMarathonScore(game.GameNumber);
-                }
+                PlayerGameInfo Info = new PlayerGameInfo();
+                Info.GameNumber = game.GameNumber;
+                Info.WeekNumber = game.WeekNumber;
+                Info.Finisdhed = true;
+                Info.Dropped = false;
+                Info.Faction = gameplayer.faction;
+                Info.Rank = gameplayer.rank;
+                Ladder.Find(x => x.PlayerName == gameplayer.playername).AddGameInfo(Info);
+
                 if (game.WeekNumber >= 5)
                 {
                     Ladder.Find(x => x.PlayerName == gameplayer.playername).AddTogmgMarathonScore(game.GameNumber, (int)gameplayer.rank);
