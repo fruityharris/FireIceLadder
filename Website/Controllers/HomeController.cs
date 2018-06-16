@@ -19,7 +19,8 @@ namespace Website.Controllers
             get {
                 if (mMongoDatabase == null)
                     {
-                    var connectionString = "mongodb+srv://Ladder:1_Yatsura@cluster0-j66ax.mongodb.net/admin?retryWrites=true";
+
+                    string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["MongoDB"].ToString(); 
                     var client = new MongoClient(connectionString);
                     mMongoDatabase = client.GetDatabase("FireIceLadder");
 
