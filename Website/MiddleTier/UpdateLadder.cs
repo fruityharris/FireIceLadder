@@ -198,10 +198,6 @@ namespace Website.MiddleTier
                 {
                     Ladder.Find(x => x.PlayerName == gameplayer.playername).AddWinToMarathonScore(game.GameNumber);
                 }
-                if (game.WeekNumber >= 5)
-                {
-                    Ladder.Find(x => x.PlayerName == gameplayer.playername).AddTogmgMarathonScore(game.GameNumber, (int)gameplayer.rank);
-                }
             }
 
             // give everyone a score 

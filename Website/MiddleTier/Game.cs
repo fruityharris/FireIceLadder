@@ -111,19 +111,12 @@ namespace Website.MiddleTier
         public string PlayerName;
         [BsonDictionaryOptions(DictionaryRepresentation.ArrayOfArrays)]
         public Dictionary<int, int> MarathonScore;
-        public int gmgMarathonScore;
 
         public LadderPlayer(string lPlayerName, int lPosition)
         {
             MarathonScore = new Dictionary<int, int>();
             PlayerName = lPlayerName;
             Position = lPosition;
-            gmgMarathonScore = 0;
-        }
-
-        public void AddTogmgMarathonScore(int GameNumber, int rank)
-        {
-            gmgMarathonScore += 1000 / (GameNumber * rank);
         }
 
         public void AddWinToMarathonScore(int GameNumber)
