@@ -17,6 +17,141 @@ namespace Website.MiddleTier
 
     public class UpdateLadder
     {
+        public static void Update(IMongoDatabase db)
+        {
+            //            db.DropCollection("Games");
+            //            db.DropCollection("W1Games");
+            //            db.DropCollection("RunningGames");
+            db.DropCollection("GameWeeks");
+            Ladder.Clear();
+     
+
+            List<Game> AllGames = GetGamesFromSnellman("FireIceLadderW%");
+
+
+            // First create GameWeek 1
+
+            GameWeek GW1 = new GameWeek();
+            GW1.Name = "Week 1";
+            GW1.ProcessingOrder = 1;
+            GW1.Games = new List<Game>();
+
+            List<Game> FinishedW1Games = AllGames.Where(x => (x.WeekNumber == 1 && x.finished == 1 && x.aborted == 0))
+                                                                    .OrderByDescending(x => x.seconds_since_update).ToList();
+
+
+            foreach (Game GameData in FinishedW1Games)
+            {
+                ProcessGame(GameData);
+                GameData.index = GW1.Games.Count();
+                GW1.Games.Add(GameData);
+            }
+
+            for (int rank = 1; rank < 5; rank++)
+            {
+                foreach (Game GameData in FinishedW1Games)
+                {
+                    foreach (GamePlayer gameplayer in GameData.GamePlayers.Where(x => x.rank == rank && x.dropped != 1).OrderBy(x => x.playername))
+                    {
+                        Ladder.Add(new LadderPlayer(gameplayer.playername, Ladder.Count() + 1));
+                    }
+                }
+            }
+
+
+            GW1.Ladder = Ladder;
+            SaveGameWeek(GW1,  db);
+            foreach (LadderPlayer LadderPlayer in Ladder)
+            {
+                LadderPlayer.OldPosition = LadderPlayer.Position;
+            }
+
+
+            // Now gameweeks 2 - 7
+
+            int i = 2;
+            GameWeek CurrentGW = new GameWeek();
+            CurrentGW.ProcessingOrder = i;
+            CurrentGW.Name = "Week ~" + i.ToString();
+            CurrentGW.Games = new List<Game>();
+            foreach (Game GameData in AllGames.Where(x => (x.aborted == 0 && x.WeekNumber > 1 && x.WeekNumber < 8))
+                                                                    .OrderByDescending(x => x.seconds_since_update))
+            {
+                ProcessGame(GameData);
+
+                if (CurrentGW.Games.Count() > 15)
+                {
+                    CurrentGW.Ladder = Ladder;
+                    SaveGameWeek(CurrentGW, db);
+                    foreach (LadderPlayer LadderPlayer in Ladder)
+                    {
+                        LadderPlayer.OldPosition = LadderPlayer.Position;
+                    }
+                    i = Math.Min(7, i + 1);
+                    CurrentGW.Name = "Week ~" + i.ToString();
+                    CurrentGW.Games.Clear();
+                    CurrentGW.ProcessingOrder = i;
+                }
+                GameData.index = CurrentGW.Games.Count();
+                CurrentGW.Games.Add(GameData);
+
+
+                if (GameData.finished == 1)
+                {
+                    AddGameToLadder(GameData);
+                }
+            }
+            CurrentGW.Ladder = Ladder;
+            SaveGameWeek(CurrentGW, db);
+            foreach (LadderPlayer LadderPlayer in Ladder)
+            {
+                LadderPlayer.OldPosition = LadderPlayer.Position;
+            }
+
+
+            // Now gameweeks 8+
+
+            int CurrentWeekNumber = 8;
+            CurrentGW.ProcessingOrder = CurrentWeekNumber;
+            CurrentGW.Name = "Week " + CurrentWeekNumber.ToString();
+            CurrentGW.Games.Clear();
+            foreach (Game GameData in AllGames.Where(x => (x.aborted == 0 && x.WeekNumber >= 8))
+                                                                                .OrderBy(x => x.WeekNumber).ThenByDescending(x => x.GameNumber))
+            {
+                ProcessGame(GameData);
+
+                if (GameData.WeekNumber != CurrentWeekNumber)
+                {
+                    CurrentGW.Ladder = Ladder;
+                    SaveGameWeek(CurrentGW, db);
+                    foreach (LadderPlayer LadderPlayer in Ladder)
+                    {
+                        LadderPlayer.OldPosition = LadderPlayer.Position;
+                    }
+                    CurrentWeekNumber = GameData.WeekNumber;
+                    CurrentGW.Name = "Week " + CurrentWeekNumber.ToString();
+                    CurrentGW.Games.Clear();
+                    CurrentGW.ProcessingOrder = CurrentWeekNumber;
+                }
+
+                GameData.index = CurrentGW.Games.Count();
+                CurrentGW.Games.Add(GameData);
+
+
+                if (GameData.finished == 1)
+                {
+                    AddGameToLadder(GameData);
+                }
+            }
+            CurrentGW.Ladder = Ladder;
+            SaveGameWeek(CurrentGW, db);
+            foreach (LadderPlayer LadderPlayer in Ladder)
+            {
+                LadderPlayer.OldPosition = LadderPlayer.Position;
+            }
+
+        }
+
         public static List<Game> GetGamesFromSnellman(string Pattern)
         {
 
@@ -41,74 +176,15 @@ namespace Website.MiddleTier
             db.GetCollection<BsonDocument>(CollectionName).InsertOne(game.ToBsonDocument());
         }
 
+        public static void SaveGameWeek(GameWeek GW, IMongoDatabase db)
+        {
+            db.GetCollection<BsonDocument>("GameWeeks").InsertOne(GW.ToBsonDocument());
+        }
+
         static List<LadderPlayer> Ladder = new List<LadderPlayer>();
         static int LargestGameNumber = 0;
 
 
-        public static void Update(IMongoDatabase db)
-        {
-            db.DropCollection("Games");
-            db.DropCollection("W1Games");
-            db.DropCollection("RunningGames");
-            Ladder.Clear();
-
-            List<Game> W1Games = GetGamesFromSnellman("FireIceLadderW1G%");
-            List<Game> AllGames = GetGamesFromSnellman("FireIceLadderW%");
-
-
-            List<Game> FinishedW1Games = W1Games.Where(x => (x.finished == 1 && x.aborted == 0))
-                                                                    .OrderByDescending(x => x.seconds_since_update).ToList();
-
-            for (int rank = 1; rank < 5; rank++)
-            {
-                foreach (Game GameData in FinishedW1Games)
-                {
-                    ProcessGame(GameData);
-                    foreach (GamePlayer gameplayer in GameData.GamePlayers.Where(x => x.rank == rank && x.dropped != 1).OrderBy(x => x.playername))
-                    {
-                        Ladder.Add(new LadderPlayer(gameplayer.playername, Ladder.Count() + 1));
-                    }
-                }
-            }
-
-
-            int W1ProcessingOrder = 0;
-            foreach (Game GameData in FinishedW1Games)
-            {
-                W1ProcessingOrder++;
-                GameData.Ladder = Ladder;
-                SaveGame(GameData, W1ProcessingOrder, "W1Games", db);
-            }
-            
-
-
-            int GameProcessingOrder = 0;
-            foreach (Game GameData in AllGames.Where(x => (x.finished == 1 && x.aborted == 0 && x.WeekNumber > 1 && x.WeekNumber < 8))
-                                                                    .OrderByDescending(x => x.seconds_since_update)
-                                                                    .Concat(AllGames.Where(x => (x.finished == 1 && x.aborted == 0 && x.WeekNumber >= 8))
-                                                                    .OrderBy(x => x.WeekNumber).ThenByDescending(x => x.GameNumber)))
-            {
-                GameProcessingOrder += 1;
-                ProcessGame(GameData);
-                AddGameToLadder(GameData);
-
-                // Sort ladder by marathon position and add to the game
-                GameData.Ladder = Ladder;
-                
-                SaveGame(GameData, GameProcessingOrder, "Games", db);
-
-            }
-
-            GameProcessingOrder = 0;
-            foreach (Game GameData in AllGames.Where(x => (x.finished == 0 && x.aborted == 0)))
-            {
-                GameProcessingOrder++;
-                ProcessGame(GameData);
-                SaveGame(GameData, GameProcessingOrder, "RunningGames", db);
-
-            }
-            
-        }
 
 
 
@@ -143,10 +219,6 @@ namespace Website.MiddleTier
 
         static void AddGameToLadder(Game game)
         {
-            foreach (LadderPlayer LadderPlayer in Ladder)
-            {
-                LadderPlayer.OldPosition = LadderPlayer.Position;
-            }
 
             // add everyone to the ladder in order
             int ProcessingOrder = 1;
@@ -164,7 +236,7 @@ namespace Website.MiddleTier
                 PlayerGameInfo Info = new PlayerGameInfo();
                 Info.GameNumber = game.GameNumber;
                 Info.WeekNumber = game.WeekNumber;
-                Info.Finisdhed = true;
+                Info.Finished = true;
                 Info.Dropped = false;
                 Info.Faction = gameplayer.faction;
                 Info.Rank = gameplayer.rank;

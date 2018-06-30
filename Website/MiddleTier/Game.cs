@@ -53,6 +53,15 @@ namespace Website.MiddleTier
         public List<SnellmanGame> games { get; set; }
     }
 
+    [BsonIgnoreExtraElements]
+    public class GameWeek
+    {
+        public List<Game> Games;
+        public string Name;
+        public List<LadderPlayer> Ladder;
+        public int ProcessingOrder;
+    }
+
 
     [BsonIgnoreExtraElements]
     public class Game
@@ -66,7 +75,6 @@ namespace Website.MiddleTier
         public List<int?> ranks { get; set; }
         public string name { get; set; }
         public List<GamePlayer> GamePlayers { get; set; }
-        public List<LadderPlayer> Ladder { get; set; }
         public int? round { get; set; }
         public List<int?> vps { get; set; }
         public List<int?> dropped { get; set; }
@@ -107,7 +115,7 @@ namespace Website.MiddleTier
     {
         public int GameNumber;
         public int WeekNumber;
-        public bool Finisdhed;
+        public bool Finished;
         public bool Dropped;
         public string Faction;
         public int? Rank;

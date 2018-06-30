@@ -13,34 +13,22 @@ namespace Website.Models
 {
     public class Ladder
     {
-        public List<Game> Games;
-        public List<Game> W1Games;
-        public List<Game> RunningGames;
-        public Ladder(List<BsonDocument> AllGamesDoc, List<BsonDocument> W1GamesDoc, List<BsonDocument> RunningGamesDoc)
+        public List<GameWeek> GameWeeks;
+        public int NumRowsDivFive;
+        public Ladder(List<BsonDocument> GameWeeksDoc)
         {
-            Games = new List<Game>();
-            W1Games = new List<Game>();
-            RunningGames = new List<Game>();
-            foreach (var document in AllGamesDoc.OrderByDescending(x => x))
+            NumRowsDivFive = 0;
+            var lGameWeeks = new List<GameWeek>(); 
+            foreach (var document in GameWeeksDoc.OrderByDescending(x => x))
             {
-                Game game = BsonSerializer.Deserialize<Game>(document);
-                Games.Add(game);
+                GameWeek gameweek = BsonSerializer.Deserialize<GameWeek>(document);
+                lGameWeeks.Add(gameweek);
+                NumRowsDivFive = Math.Max(NumRowsDivFive, gameweek.Ladder.Count()/5);
+                NumRowsDivFive = Math.Max(NumRowsDivFive, gameweek.Games.Count());
+
             }
 
-            foreach (var document in W1GamesDoc)
-            {
-                Game game = BsonSerializer.Deserialize<Game>(document);
-                W1Games.Add(game);
-            }
-
-            foreach (var document in RunningGamesDoc)
-            {
-                Game game = BsonSerializer.Deserialize<Game>(document);
-                RunningGames.Add(game);
-            }
-
-
-
+            GameWeeks = lGameWeeks.OrderByDescending(x => x.ProcessingOrder).ToList();
         }
     }
 
