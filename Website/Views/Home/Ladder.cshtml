@@ -52,19 +52,20 @@
 		<td class="@(GWFinished?"GWFinished":"")">
 			@if (Player != null)
 		{
-			<text>@Player.Position</text>
+			<span class="@(Player.GameNumber == null ? "notplaying" : "playing")">@Player.Position</span>
 	}
 		</td>
 		<td class="borderright @(GWFinished?"GWFinished":"")">
 			@if (Player != null)
 	{
-		<text>@Player.PlayerName</text>
+			<span class="@(Player.GameNumber == null ? "notplaying" : "playing")">
+				@Player.PlayerName</span>
+	}
+	else
+	{
+			<text>&nbsp;</text>
 }
-else
-{
-		<text>&nbsp;</text>
-}
-		</td>
+</td>
 	if (i % 5 == 0)
 	{
 		if (GW.Games.Count() > i / 5)

@@ -129,6 +129,7 @@ namespace Website.MiddleTier
         [BsonDictionaryOptions(DictionaryRepresentation.ArrayOfArrays)]
         public Dictionary<int, PlayerGameInfo> Games;
         public int gmgMarathonScore;
+        public int? GameNumber;
 
         public LadderPlayer(string lPlayerName, int lPosition)
         {

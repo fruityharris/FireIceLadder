@@ -22,6 +22,11 @@ namespace Website.Models
             foreach (var document in GameWeeksDoc.OrderByDescending(x => x))
             {
                 GameWeek gameweek = BsonSerializer.Deserialize<GameWeek>(document);
+                foreach(LadderPlayer lp in gameweek.Ladder)
+                {
+                    Game PlayerGame = gameweek.Games.Where(x => x.GamePlayers.Exists(y => y.playername == lp.PlayerName)).FirstOrDefault();
+                    lp.GameNumber = PlayerGame == null ? (int?)null : PlayerGame.GameNumber;
+                }
                 lGameWeeks.Add(gameweek);
                 NumRowsDivFive = Math.Max(NumRowsDivFive, gameweek.Ladder.Count()/5);
                 NumRowsDivFive = Math.Max(NumRowsDivFive, gameweek.Games.Count());
