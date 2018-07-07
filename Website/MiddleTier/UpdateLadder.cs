@@ -24,6 +24,7 @@ namespace Website.MiddleTier
             //            db.DropCollection("RunningGames");
             db.DropCollection("GameWeeks");
             Ladder.Clear();
+            CurrentPlayers.Clear();
      
 
             List<Game> AllGames = GetGamesFromSnellman("FireIceLadderW%");
@@ -110,8 +111,8 @@ namespace Website.MiddleTier
 
 
             // Now gameweeks 8+
-
             int CurrentWeekNumber = 8;
+            CurrentPlayers = AllGames.Where(x => (x.aborted == 0 && x.WeekNumber == CurrentWeekNumber)).SelectMany(x => x.usernames).ToList();
             CurrentGW.ProcessingOrder = CurrentWeekNumber;
             CurrentGW.Name = "Week " + CurrentWeekNumber.ToString();
             CurrentGW.Games.Clear();
@@ -129,6 +130,7 @@ namespace Website.MiddleTier
                         LadderPlayer.OldPosition = LadderPlayer.Position;
                     }
                     CurrentWeekNumber = GameData.WeekNumber;
+                    CurrentPlayers = AllGames.Where(x => (x.aborted == 0 && x.WeekNumber == CurrentWeekNumber)).SelectMany(x => x.usernames).ToList();
                     CurrentGW.Name = "Week " + CurrentWeekNumber.ToString();
                     CurrentGW.Games.Clear();
                     CurrentGW.ProcessingOrder = CurrentWeekNumber;
@@ -182,8 +184,8 @@ namespace Website.MiddleTier
         }
 
         static List<LadderPlayer> Ladder = new List<LadderPlayer>();
+        static List<string> CurrentPlayers = new List<string>();
         static int LargestGameNumber = 0;
-
 
 
 
@@ -295,16 +297,38 @@ namespace Website.MiddleTier
                 if (Ladder.Exists(x => x.PlayerName == gameplayer.playername))
                 {
                     gameplayer.currentposition = Ladder.Find(x => x.PlayerName == gameplayer.playername).Position;
-                    double NewPosAbsolute = Convert.ToDouble(gameplayer.currentposition) - gameplayer.score;
-                    double NewPosRelative = Convert.ToDouble(gameplayer.currentposition) * (1 - gameplayer.score / 20);
+                    double ScoreRelative = Convert.ToDouble(gameplayer.currentposition) * gameplayer.score / 20;
+                    int PlacesToMove = 0;
+
                     if (gameplayer.score < 0)
                     {
-                        gameplayer.newposition = Math.Min(TotalPlayers, Convert.ToInt32(Math.Ceiling(Math.Max(NewPosAbsolute, NewPosRelative))));
-
+                        PlacesToMove = Convert.ToInt32(Math.Floor(Math.Min(gameplayer.score, ScoreRelative)));
                     }
                     else
                     {
-                        gameplayer.newposition = Math.Max(1, Convert.ToInt32(Math.Floor(Math.Min(NewPosAbsolute, NewPosRelative))));
+                        PlacesToMove = Convert.ToInt32(Math.Ceiling(Math.Max(gameplayer.score, ScoreRelative)));
+                    }
+
+                    if (CurrentPlayers.Count() == 0 || PlacesToMove <= 0)
+                    {
+                        gameplayer.newposition = Math.Max(gameplayer.currentposition - PlacesToMove, 1);
+                    }
+                    else
+                    {
+                        gameplayer.newposition = gameplayer.currentposition;
+                        int j = 0;
+                        while (j < PlacesToMove && gameplayer.newposition > 1)
+                        {
+                            gameplayer.newposition--;
+                            if (gameplayer.newposition < 1)
+                            {
+                                j++;
+                            }
+                            else
+                            {
+                                j = j + Ladder.Where(x => x.Position == gameplayer.newposition && CurrentPlayers.Contains(x.PlayerName)).Count();
+                            }
+                        }
                     }
 
                     // resolve duplicates - shunt them down 1 if someone has the same position
