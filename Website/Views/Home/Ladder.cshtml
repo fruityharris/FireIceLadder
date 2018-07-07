@@ -187,6 +187,7 @@
 		Everyone in the game gets their new ladder position calculated as follows (L is current ladder position, S is the score as determined by the table below).<br />
 		For positive S: New L = Floor(Min(L *(1 - S/20), L - S)) <br />
 		For negative S: New L = Ceiling(Max(L *(1 - S/20), L - S)) <br />
+		(From Gameweek 9, when going up the ladder, players who aren't in that gameweek are ignored - i.e. they're passed "for free")<br/>
 		If N players from the game receive the same new position, they are allocated positions L through L+ N - 1 ordered by position in the game and then alphabetically.<br />
 		Ls are adjusted such that they are between 1 and (# of players on ladder).<br />
 		Everyone else on the ladder gets shunted down/up rungs to accommodate the new positions.

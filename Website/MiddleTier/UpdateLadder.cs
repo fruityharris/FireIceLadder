@@ -309,7 +309,7 @@ namespace Website.MiddleTier
                         PlacesToMove = Convert.ToInt32(Math.Ceiling(Math.Max(gameplayer.score, ScoreRelative)));
                     }
 
-                    if (CurrentPlayers.Count() == 0 || PlacesToMove <= 0)
+                    if (CurrentPlayers.Count() == 0 || PlacesToMove <= 0 || game.WeekNumber > 8)
                     {
                         gameplayer.newposition = Math.Max(gameplayer.currentposition - PlacesToMove, 1);
                     }
