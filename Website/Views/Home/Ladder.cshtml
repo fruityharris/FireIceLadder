@@ -71,7 +71,7 @@
 		if (GW.Games.Count() > i / 5)
 		{
 			Game game = GW.Games.OrderByDescending(x => x.index).ToList()[i / 5];
-			<td rowspan="5" class="borderright borderabove borderbelow @(game.finished==1?"finished":"unfinished")">
+			<td rowspan="5" class="borderright borderabove borderbelow @(game.finished==1?game.seconds_since_update < 86400*2 ? "finishedrecently":"finished":"unfinished")">
 				<div class="GameNumber@(game.WeekNumber > 4 ? game.GameNumber : 0)">
 					<a href="https://terra.snellman.net/game/@game.name">@game.name.Replace("FireIceLadder", "")</a>
 				</div>
