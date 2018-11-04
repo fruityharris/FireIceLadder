@@ -123,7 +123,8 @@ namespace Website.MiddleTier
 
                 if (GameData.WeekNumber != CurrentWeekNumber)
                 {
-                    CurrentGW.Ladder = Ladder;
+
+                    CurrentGW.Ladder = PurgeNonPlayers(Ladder, AllGames, CurrentWeekNumber);
                     SaveGameWeek(CurrentGW, db);
                     foreach (LadderPlayer LadderPlayer in Ladder)
                     {
@@ -145,13 +146,35 @@ namespace Website.MiddleTier
                     AddGameToLadder(GameData);
                 }
             }
-            CurrentGW.Ladder = Ladder;
+
+            CurrentGW.Ladder = PurgeNonPlayers(Ladder, AllGames, CurrentWeekNumber);
             SaveGameWeek(CurrentGW, db);
             foreach (LadderPlayer LadderPlayer in Ladder)
             {
                 LadderPlayer.OldPosition = LadderPlayer.Position;
             }
 
+        }
+
+        public static List<LadderPlayer> PurgeNonPlayers(List<LadderPlayer> Ladder, List<Game> Games, int CurrentWeekNumber)
+        {
+            if (CurrentWeekNumber > 19)
+            {
+                List<Game> RecentGames = Games.Where(x => x.aborted == 0 && x.WeekNumber >= CurrentWeekNumber - 4 && x.WeekNumber <= CurrentWeekNumber).ToList();
+                List<GamePlayer> RecentPlayers = RecentGames.SelectMany(x => x.GamePlayers).ToList();
+                List<string> RecentPlayerNames = RecentPlayers.Select(x => x.playername).ToList();
+                Ladder.RemoveAll(x => !RecentPlayerNames.Contains(x.PlayerName) && x.Position > Ladder.Count * .75);
+
+                int position = 1;
+                foreach (LadderPlayer LadderPlayer in Ladder.OrderBy(x => x.Position))
+                {
+                    LadderPlayer.Position = position;
+                    position++;
+                }
+            }
+
+
+            return Ladder;
         }
 
         public static List<Game> GetGamesFromSnellman(string Pattern)
