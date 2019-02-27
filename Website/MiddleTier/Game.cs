@@ -128,7 +128,7 @@ namespace Website.MiddleTier
         public string PlayerName;
         [BsonDictionaryOptions(DictionaryRepresentation.ArrayOfArrays)]
         public Dictionary<int, PlayerGameInfo> Games;
-        public MarathonScore Score;
+        public int gmgMarathonScore;
         public int? GameNumber;
 
         public LadderPlayer(string lPlayerName, int lPosition)
@@ -136,50 +136,12 @@ namespace Website.MiddleTier
             Games = new Dictionary<int, PlayerGameInfo>();
             PlayerName = lPlayerName;
             Position = lPosition;
+            gmgMarathonScore = 0;
         }
 
-        public class MarathonScore
+        public void AddTogmgMarathonScore(int GameNumber, int rank)
         {
-            public int LowestGame;
-            public int LowestRank;
-            public int NumberofTimes;
-            public MarathonScore (int lLowestGame, int lLowestRank, int lNumberofTimes)
-            {
-                LowestGame = lLowestGame;
-                LowestRank = lLowestRank;
-                NumberofTimes = lNumberofTimes;
-            }
-
-            public override string ToString()
-            {
-                return String.Format("Game {0}, Rank {1}{2}", LowestGame, LowestRank, NumberofTimes > 1 ? ", " + NumberofTimes.ToString() + " times" : "");
-            }
-        }
-
-        public void AddToMarathonScore(int GameNumber, int rank)
-        {
-            if (Score == null)
-            {
-                Score = new MarathonScore(GameNumber, rank, 1);
-            }
-            else if (Score.LowestGame > GameNumber)
-            {
-                Score.LowestGame = GameNumber;
-                Score.LowestRank = rank;
-                Score.NumberofTimes = 1;
-            }
-            else if (Score.LowestGame == GameNumber)
-            {
-                if (Score.LowestRank > rank)
-                {
-                    Score.LowestRank = rank;
-                    Score.NumberofTimes = 1;
-                }
-                else if (Score.LowestRank == rank)
-                {
-                    Score.NumberofTimes += 1;
-                }
-            }
+            gmgMarathonScore += 1000 / (GameNumber * rank);
         }
 
         public void AddGameInfo(PlayerGameInfo Info)
