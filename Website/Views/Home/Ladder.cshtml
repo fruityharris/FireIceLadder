@@ -109,59 +109,65 @@
 
 
 <div id="MarathonTable">
-	<h2>gmg Marathon proposal</h2>
-	<p>Score = sum of (1000/(game number * rank)) - gameweeks 1-5 not currently included.</p>
+	<h2>Marathon</h2>
 	<table>
-		<tr>
-			<td>
-				Player
-			</td>
-			<td>
-				Score
-			</td>
-			@for (int i = 0; i < Model.GameWeeks.Max(x => x.ProcessingOrder); i++)
-	{
-		<td style="width:30px;">W@(Model.GameWeeks.Max(x => x.ProcessingOrder) - i)</td>
+        <tr>
+            <td>
+                Player
+            </td>
+            <td>
+                Best Result
+            </td>
+            @for (int i = 0; i < Model.GameWeeks.Max(x => x.ProcessingOrder); i++)
+    {
+        <td style="width:30px;">W@(Model.GameWeeks.Max(x => x.ProcessingOrder) - i)</td>
 }
-		</tr>
-		@foreach (LadderPlayer ladderplayer in (Model.GameWeeks.First().Ladder.Where(x => x.gmgMarathonScore > 0).OrderByDescending(x => x.gmgMarathonScore)))
+        </tr>
+		@foreach (LadderPlayer ladderplayer in (Model.GameWeeks.First().Ladder.Where(x => x.Score !=null).OrderBy(x => x.Score.LowestGame).ThenBy(x => x.Score.LowestRank).ThenByDescending(x => x.Score.NumberofTimes)))
 		{
-		<tr>
-			<td>
-				@ladderplayer.PlayerName
-			</td>
-			<td>
-				@ladderplayer.gmgMarathonScore
-			</td>
-			@for (int i = 0; i < Model.GameWeeks.Max(x => x.ProcessingOrder); i++)
-	{
-			<td>
-				@if (ladderplayer.Games.ContainsKey(Model.GameWeeks.Max(x => x.ProcessingOrder) - i))
-	{
-		PlayerGameInfo Info = ladderplayer.Games[Model.GameWeeks.Max(x => x.ProcessingOrder) - i];
-			<text>
-
-				<div class="playerinfo">
-
-					<span class="faction-box" style="background-color:deepskyblue;text-decoration:none">
-						<a href="https://terra.snellman.net/game/FireIceLadderW@(Model.GameWeeks.Max(x => x.ProcessingOrder) - i)G@(Info.GameNumber)">
-							G@(Info.GameNumber)
-
-						</a>
-					</span>&nbsp;
-					<span class="medal-circle medal-@Info.Rank">@(Info.Rank)</span><text>&nbsp;</text>
-					@if (Info.Faction != null && Info.Faction.Length > 0)
-	{
-				<span class="faction-box @Info.Faction">@Info.Faction.Substring(0, 1).ToUpper()</span>
+        <tr>
+            <td>
+                @ladderplayer.PlayerName
+            </td>
+            <td>
+                <span class="faction-box" style="background-color:deepskyblue;text-decoration:none">
+                    G@(ladderplayer.Score.LowestGame)
+                </span> &nbsp;
+                <span class="medal-circle medal-@ladderplayer.Score.LowestRank">@(ladderplayer.Score.LowestRank)</span>
+                @if (ladderplayer.Score.NumberofTimes > 1)
+    {
+            <text> (@ladderplayer.Score.NumberofTimes times)</text>
 }
-				</div>
-				</text>
+            </td>
+            @for (int i = 0; i < Model.GameWeeks.Max(x => x.ProcessingOrder); i++)
+    {
+        <td>
+            @if (ladderplayer.Games.ContainsKey(Model.GameWeeks.Max(x => x.ProcessingOrder) - i))
+    {
+        PlayerGameInfo Info = ladderplayer.Games[Model.GameWeeks.Max(x => x.ProcessingOrder) - i];
+        <text>
+
+            <div class="playerinfo">
+
+                <span class="faction-box" style="background-color:deepskyblue;text-decoration:none">
+                    <a href="https://terra.snellman.net/game/FireIceLadderW@(Model.GameWeeks.Max(x => x.ProcessingOrder) - i)G@(Info.GameNumber)">
+                        G@(Info.GameNumber)
+
+                    </a>
+                </span>&nbsp;
+                <span class="medal-circle medal-@Info.Rank">@(Info.Rank)</span><text>&nbsp;</text>
+                @if (Info.Faction != null && Info.Faction.Length > 0)
+        {
+            <span class="faction-box @Info.Faction">@Info.Faction.Substring(0, 1).ToUpper()</span>
+}
+            </div>
+        </text>
 
 
 }
-			</td>
+        </td>
 }
-		</tr>
+        </tr>
 		}
 	</table>
 </div>
