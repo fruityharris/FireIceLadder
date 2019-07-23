@@ -215,12 +215,6 @@ namespace Website.MiddleTier
 
         public static void UpdateLadderBasedOnGame(Game game, int DefaultLadderPosition)
         {
-            if (game.finished == 1)
-            {
-                // give everyone a score 
-                AddPositionalScores(game);
-            }
-
             foreach (GamePlayer gameplayer in game.GamePlayers)
             {
                 if (game.finished == 1)
@@ -232,8 +226,13 @@ namespace Website.MiddleTier
                         gameplayer.currentposition = DefaultLadderPosition;
 
                     }
+                    else
+                    {
+                        gameplayer.currentposition = Ladder.Find(x => x.PlayerName == gameplayer.playername).Position;
 
-                    AddPositionalScores(game);
+                    }
+
+                    AddPositionalScores(game, false);
 
 
                     // Add the game info to the ladder player and set their temporary "position" ready for ordering
@@ -262,7 +261,8 @@ namespace Website.MiddleTier
 
         }
 
-            public static void AddPositionalScores(Game game)
+        // You probably want UseIntegerDivision = false
+        public static void AddPositionalScores(Game game, bool UseIntegerDivision)
         {
 
             Dictionary<int, int> ScoresList = GetScoresList(game.usernames.Count());
@@ -284,7 +284,19 @@ namespace Website.MiddleTier
                 foreach (GamePlayer gameplayer in game.GamePlayers.Where(x => x.rank == i))
                 {
                     gameplayer.score = gameplayer.dropped == 1 ? -4 : score;
-                    gameplayer.score = gameplayer.score * Math.Max(1, gameplayer.currentposition / 20);
+                    if (UseIntegerDivision)
+                    {
+                        gameplayer.score = gameplayer.score * Math.Max(1, gameplayer.currentposition / 20);
+                    }
+                    else
+                    {
+                        if(gameplayer.currentposition > 20)
+                        {
+                            gameplayer.score = gameplayer.score * gameplayer.currentposition;
+                            gameplayer.score = gameplayer.score / 20;
+
+                        }
+                    }
                 }
             }
 
@@ -412,7 +424,7 @@ namespace Website.MiddleTier
 
 
             // give everyone a score 
-            AddPositionalScores(game);
+            AddPositionalScores(game, true);
 
             // set people's new positions
             int TotalPlayers = Ladder.Count();
