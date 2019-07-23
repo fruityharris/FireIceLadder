@@ -246,7 +246,6 @@ namespace Website.MiddleTier
                     Info.Rank = gameplayer.rank;
                     LadderPlayer LP = Ladder.Find(x => x.PlayerName == gameplayer.playername);
                     LP.AddGameInfo(Info);
-                    LP.AddToMarathonScore(game.GameNumber, (int)gameplayer.rank);
                     LP.Playing = true;
                     LP.TemporaryPositionDouble = LP.Position - gameplayer.score;
                 }
@@ -406,7 +405,7 @@ namespace Website.MiddleTier
 
                 if (game.WeekNumber >= 5)
                 {
-                    Ladder.Find(x => x.PlayerName == gameplayer.playername).AddToMarathonScore(game.GameNumber, (int)gameplayer.rank);
+                    Ladder.Find(x => x.PlayerName == gameplayer.playername).AddTogmgMarathonScore(game.GameNumber, (int)gameplayer.rank);
                 }
 
             }
