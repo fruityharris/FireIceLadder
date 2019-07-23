@@ -30,7 +30,7 @@
 		@foreach (GameWeek GW in Model.GameWeeks)
 	{
 		bool GWFinished = !GW.Games.Exists(x => x.finished != 1);
-		var Player = GW.Ladder.Where(x => x.Position == i + 1).FirstOrDefault();
+		var Player = GW.Ladder.Where(x => x.Position == i + 1 && (GW.ProcessingOrder < 38 || x.Playing)).FirstOrDefault();
 		<td class="@(GWFinished?"GWFinished":"")">
 			@if (Player != null)
 			{
@@ -52,7 +52,8 @@
 		<td class="@(GWFinished?"GWFinished":"")">
 			@if (Player != null)
 		{
-			<span class="@(Player.GameNumber == null ? "notplaying" : "playing")">@Player.Position</span>
+			<span class="@(Player.GameNumber == null ? "notplaying" : "playing")">@Player.Position @(Request.QueryString["ShowWorking"] == "true" ? 
+ " (" + Player.TemporaryPositionDouble.ToString() + ")": "")</span>
 	}
 		</td>
 		<td class="borderright @(GWFinished?"GWFinished":"")">
@@ -188,15 +189,11 @@
 
 	<h3>Determining Ladder Position - details</h3>
 	<p>
-		To determine ladder positions, the following algorithm is applied to each game in a pre-defined order (by gameweek, higher numbered games first - but note that weeks 2-7 are instead applied in finish order for legacy reasons; W1 was the initialisation week):<br />
-		Anyone in the game who's not yet on the ladder, gets added at the bottom of the ladder, in order of finishing position (alphabetically in the case of a tie).<br />
-		Everyone in the game gets their new ladder position calculated as follows (L is current ladder position, S is the score as determined by the table below).<br />
-		For positive S: New L = Floor(Min(L *(1 - S/20), L - S)) <br />
-		For negative S: New L = Ceiling(Max(L *(1 - S/20), L - S)) <br />
-		(From Gameweek 9, when going up the ladder, players who aren't in that gameweek are ignored - i.e. they're passed "for free")<br/>
-		If N players from the game receive the same new position, they are allocated positions L through L+ N - 1 ordered by position in the game and then alphabetically.<br />
-		Ls are adjusted such that they are between 1 and (# of players on ladder).<br />
-		Everyone else on the ladder gets shunted down/up rungs to accommodate the new positions.
+        From Gameweek 38, the completed games in each gameweek are applied simultaneously.
+		Everyone is first assigned temporary ladder positions. Anyone in the game who's not yet on the ladder, gets added at the bottom of the ladder, in order of finishing position (alphabetically in the case of a tie), then everyone in the game gets their temporary ladder position calculated as follows (L is current ladder position, S is the score as determined by the table below).<br />
+		For positive S: New L = Min(L *(1 - S/20), L - S) <br />
+		For negative S: New L = Max(L *(1 - S/20), L - S) <br />
+        Then everyone is ordered based on their temporary ladder positions and assigned new positions starting from 1.
 	</p>
 
 	<table>

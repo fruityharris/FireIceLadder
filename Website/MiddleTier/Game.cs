@@ -125,10 +125,12 @@ namespace Website.MiddleTier
     {
         public int Position;
         public int? OldPosition;
+        public double TemporaryPositionDouble;
         public string PlayerName;
         [BsonDictionaryOptions(DictionaryRepresentation.ArrayOfArrays)]
         public Dictionary<int, PlayerGameInfo> Games;
         public MarathonScore Score;
+        public bool Playing;
         public int? GameNumber;
 
         public LadderPlayer(string lPlayerName, int lPosition)

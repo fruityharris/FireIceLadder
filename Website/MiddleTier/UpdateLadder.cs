@@ -112,11 +112,12 @@ namespace Website.MiddleTier
 
             // Now gameweeks 8+
             int CurrentWeekNumber = 8;
+            
             CurrentPlayers = AllGames.Where(x => (x.aborted == 0 && x.WeekNumber == CurrentWeekNumber)).SelectMany(x => x.usernames).ToList();
             CurrentGW.ProcessingOrder = CurrentWeekNumber;
             CurrentGW.Name = "Week " + CurrentWeekNumber.ToString();
             CurrentGW.Games.Clear();
-            foreach (Game GameData in AllGames.Where(x => (x.aborted == 0 && x.WeekNumber >= 8))
+            foreach (Game GameData in AllGames.Where(x => (x.aborted == 0 && x.WeekNumber >= 8 && x.WeekNumber < 38))
                                                                                 .OrderBy(x => x.WeekNumber).ThenByDescending(x => x.GameNumber))
             {
                 ProcessGame(GameData);
@@ -154,8 +155,143 @@ namespace Website.MiddleTier
                 LadderPlayer.OldPosition = LadderPlayer.Position;
             }
 
+
+            // Now gameweeks 38 onwards
+            // Process all games in a gameweek at once and then order everyone properly at the end
+            // No longer purge or drop down non players - just hide them somehow (probably in the front end)
+            while (true)
+            {
+                CurrentWeekNumber +=1;
+                CurrentGW.Games = AllGames.Where(x => (x.aborted == 0 && x.WeekNumber == CurrentWeekNumber)).OrderBy(x=>x.GameNumber).ToList();
+                if(CurrentGW.Games.Count == 0)
+                {
+                    break;
+                }
+                CurrentGW.Name = "Week " + CurrentWeekNumber.ToString();
+                CurrentGW.ProcessingOrder = CurrentWeekNumber;
+                int InitialLadderSize = Ladder.Max(x => x.Playing ? x.Position : 0);
+                if (InitialLadderSize == 0)
+                {
+                    InitialLadderSize = Ladder.Max(x => x.Position);
+                }
+                foreach (LadderPlayer LP in Ladder)
+                {
+                    LP.Playing = false;
+                    LP.OldPosition = LP.Position;
+                    // see note below
+                    if (CurrentWeekNumber == 38)
+                    {
+                        LP.TemporaryPositionDouble = LP.Position;
+                    }
+
+                }
+
+                foreach (Game GameData in CurrentGW.Games.OrderByDescending(x => x.GameNumber))
+                {
+                    ProcessGame(GameData);
+                    GameData.index = 0 - GameData.GameNumber;
+                    UpdateLadderBasedOnGame(GameData, InitialLadderSize + 1);
+
+                }
+
+                // then put everyone in the right place on the ladder
+                // NOTE that for GW 38 we have to account for the fact everyone's moving a long way up the ladder. This means moving non-players up too, hence the "|| CurrentWeekNumber = 38". This works because we've set their temporary position above too.
+                int newpos = 1;
+                foreach (LadderPlayer LadderPlayer in Ladder.Where(x => x.Playing || CurrentWeekNumber == 38).OrderBy(x => x.TemporaryPositionDouble).ThenBy(x => x.OldPosition).ThenBy(x => x.Games.Last().Value.GameNumber).ThenBy(x => x.Games.Count()))
+                {
+                    LadderPlayer.Position = newpos;
+                    if (LadderPlayer.Playing)
+                    {
+                        newpos++;
+                    }
+                }
+
+                CurrentGW.Ladder = Ladder;
+                SaveGameWeek(CurrentGW, db);
+
+            }
+
         }
 
+        public static void UpdateLadderBasedOnGame(Game game, int DefaultLadderPosition)
+        {
+            if (game.finished == 1)
+            {
+                // give everyone a score 
+                AddPositionalScores(game);
+            }
+
+            foreach (GamePlayer gameplayer in game.GamePlayers)
+            {
+                if (game.finished == 1)
+                {
+                    // add new people to ladder. No longer worrying about people who drop in their first game - just add them to the ladder anyway
+                    if (!Ladder.Exists(x => x.PlayerName == gameplayer.playername))
+                    {
+                        Ladder.Add(new LadderPlayer(gameplayer.playername, DefaultLadderPosition));
+                        gameplayer.currentposition = DefaultLadderPosition;
+
+                    }
+
+                    AddPositionalScores(game);
+
+
+                    // Add the game info to the ladder player and set their temporary "position" ready for ordering
+                    PlayerGameInfo Info = new PlayerGameInfo();
+                    Info.GameNumber = game.GameNumber;
+                    Info.WeekNumber = game.WeekNumber;
+                    Info.Finished = true;
+                    Info.Dropped = false;
+                    Info.Faction = gameplayer.faction;
+                    Info.Rank = gameplayer.rank;
+                    LadderPlayer LP = Ladder.Find(x => x.PlayerName == gameplayer.playername);
+                    LP.AddGameInfo(Info);
+                    LP.AddToMarathonScore(game.GameNumber, (int)gameplayer.rank);
+                    LP.Playing = true;
+                    LP.TemporaryPositionDouble = LP.Position - gameplayer.score;
+                }
+                else
+                {
+                    LadderPlayer LP = Ladder.Find(x => x.PlayerName == gameplayer.playername);
+                    if (LP != null)
+                    {
+                        LP.Playing = true;
+                        LP.TemporaryPositionDouble = (double)(LP.Position);
+                    }
+                }
+            }
+
+        }
+
+            public static void AddPositionalScores(Game game)
+        {
+
+            Dictionary<int, int> ScoresList = GetScoresList(game.usernames.Count());
+
+            for (int i = 1; i <= 4; i++)
+            {
+                double score = 0;
+                int TiedPlayers = game.GamePlayers.Where(x => x.rank == i).Count();
+
+                if (TiedPlayers == 0)
+                    continue;
+
+                for (int j = i; j < i + TiedPlayers; j++)
+                {
+                    score += ScoresList[j];
+                }
+                score = score / TiedPlayers;
+
+                foreach (GamePlayer gameplayer in game.GamePlayers.Where(x => x.rank == i))
+                {
+                    gameplayer.score = gameplayer.dropped == 1 ? -4 : score;
+                    gameplayer.score = gameplayer.score * Math.Max(1, gameplayer.currentposition / 20);
+                }
+            }
+
+        }
+
+        // Legacy method for GW < 38
         public static List<LadderPlayer> PurgeNonPlayers(List<LadderPlayer> Ladder, List<Game> Games, int CurrentWeekNumber)
         {
             if (CurrentWeekNumber > 19)
@@ -242,11 +378,12 @@ namespace Website.MiddleTier
             game.LargestGameNumberInLadder = LargestGameNumber;
         }
 
+        // Legacy method for GW < 38
         static void AddGameToLadder(Game game)
         {
-
             // add everyone to the ladder in order
             int ProcessingOrder = 1;
+
 
             // if the player dropped in their first game, don't add them to the ladder
             foreach (GamePlayer gameplayer in game.GamePlayers.Where(x => x.dropped != 1).OrderBy(x => x.rank).ThenBy(x => x.playername))
@@ -271,33 +408,12 @@ namespace Website.MiddleTier
                 {
                     Ladder.Find(x => x.PlayerName == gameplayer.playername).AddToMarathonScore(game.GameNumber, (int)gameplayer.rank);
                 }
+
             }
+
 
             // give everyone a score 
-
-            Dictionary<int, int> ScoresList = GetScoresList(game.usernames.Count());
-
-            for (int i = 1; i <= 4; i++)
-            {
-                double score = 0;
-                int TiedPlayers = game.GamePlayers.Where(x => x.rank == i).Count();
-
-                if (TiedPlayers == 0)
-                    continue;
-
-                for (int j = i; j < i + TiedPlayers; j++)
-                {
-                    score += ScoresList[j];
-                }
-                score = score / TiedPlayers;
-
-                foreach (GamePlayer gameplayer in game.GamePlayers.Where(x => x.rank == i))
-                {
-                    gameplayer.score = gameplayer.dropped == 1 ? -4 : score;
-                }
-
-
-            }
+            AddPositionalScores(game);
 
             // set people's new positions
             int TotalPlayers = Ladder.Count();

@@ -1,0 +1,20 @@
+﻿@model Website.Models.AllPlayers
+
+@{
+    ViewBag.Title = "All Players";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>All Players</h2>
+
+<table class="table">
+
+@foreach (var item in Model.LadderPlayers.OrderBy(x=>x.Position).ThenByDescending(x=>x.Playing)) {
+    <tr>
+        <td>
+            @item.PlayerName
+        </td>
+    </tr>
+}
+
+</table>

@@ -28,7 +28,7 @@ namespace Website.Models
                     lp.GameNumber = PlayerGame == null ? (int?)null : PlayerGame.GameNumber;
                 }
                 lGameWeeks.Add(gameweek);
-                NumRowsDivFive = Math.Max(NumRowsDivFive, gameweek.Ladder.Count()/5 + 1);
+                NumRowsDivFive = Math.Max(NumRowsDivFive, gameweek.Ladder.Where(x => x.Playing).Count()/5 + 1);
                 NumRowsDivFive = Math.Max(NumRowsDivFive, gameweek.Games.Count());
 
             }

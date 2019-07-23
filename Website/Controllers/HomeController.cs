@@ -45,6 +45,12 @@ namespace Website.Controllers
 
         }
 
+        public ActionResult AllPlayers()
+        {
+            BsonDocument GameWeek = MongoDatabase.GetCollection<BsonDocument>("GameWeeks").Find(x => true).ToList().OrderByDescending(x => x).First();
+            return View(new Models.AllPlayers(GameWeek));
+        }
+
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";
