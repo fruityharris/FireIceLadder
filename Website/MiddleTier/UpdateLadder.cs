@@ -310,6 +310,7 @@ namespace Website.MiddleTier
                 List<Game> RecentGames = Games.Where(x => x.aborted == 0 && x.WeekNumber >= CurrentWeekNumber - 4 && x.WeekNumber <= CurrentWeekNumber).ToList();
                 List<GamePlayer> RecentPlayers = RecentGames.SelectMany(x => x.GamePlayers).ToList();
                 List<string> RecentPlayerNames = RecentPlayers.Select(x => x.playername).ToList();
+                OldPlayers.AddRange(Ladder.Where(x => !RecentPlayerNames.Contains(x.PlayerName) && x.Position > Ladder.Count * .75));
                 Ladder.RemoveAll(x => !RecentPlayerNames.Contains(x.PlayerName) && x.Position > Ladder.Count * .75);
 
                 int position = 1;
@@ -354,6 +355,7 @@ namespace Website.MiddleTier
         }
 
         static List<LadderPlayer> Ladder = new List<LadderPlayer>();
+        static List<LadderPlayer> OldPlayers = new List<LadderPlayer>();
         static List<string> CurrentPlayers = new List<string>();
         static int LargestGameNumber = 0;
 
@@ -401,7 +403,16 @@ namespace Website.MiddleTier
             {
                 if (!Ladder.Exists(x => x.PlayerName == gameplayer.playername))
                 {
-                    Ladder.Add(new LadderPlayer(gameplayer.playername, Ladder.Count() + 1));
+                    if (OldPlayers.Exists(x => x.PlayerName == gameplayer.playername))
+                    {
+                        LadderPlayer Player = OldPlayers.Where(x => x.PlayerName == gameplayer.playername).First();
+                        Player.Position = Ladder.Count() + 1;
+                        Ladder.Add(Player);
+                    }
+                    else
+                    {
+                        Ladder.Add(new LadderPlayer(gameplayer.playername,Ladder.Count() + 1));
+                    }
                 }
                 gameplayer.processingorder = ProcessingOrder;
                 ProcessingOrder++;
