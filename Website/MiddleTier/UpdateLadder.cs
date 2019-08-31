@@ -25,7 +25,6 @@ namespace Website.MiddleTier
             db.DropCollection("GameWeeks");
             Ladder.Clear();
             CurrentPlayers.Clear();
-            OldPlayers.Clear();
      
 
             List<Game> AllGames = GetGamesFromSnellman("FireIceLadderW%");
