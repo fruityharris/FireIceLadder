@@ -248,6 +248,8 @@ namespace Website.MiddleTier
                     LP.AddGameInfo(Info);
                     LP.Playing = true;
                     LP.TemporaryPositionDouble = LP.Position - gameplayer.score;
+                    LP.AddTogmgMarathonScore(game.GameNumber, (int)gameplayer.rank);
+
                 }
                 else
                 {
