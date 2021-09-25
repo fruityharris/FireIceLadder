@@ -27,8 +27,18 @@ namespace Website.MiddleTier
             CurrentPlayers.Clear();
             OldPlayers.Clear();
      
-
-            List<Game> AllGames = GetGamesFromSnellman("FireIceLadderW%");
+// Have to get them piecemeal because we've hit the limit of how many games snellman will return
+            List<Game> AllGames = GetGamesFromSnellman("FireIceLadderW0%")
+                .Concat(GetGamesFromSnellman("FireIceLadderW1%"))
+                .Concat(GetGamesFromSnellman("FireIceLadderW2%"))
+                .Concat(GetGamesFromSnellman("FireIceLadderW3%"))
+                .Concat(GetGamesFromSnellman("FireIceLadderW4%"))
+                .Concat(GetGamesFromSnellman("FireIceLadderW5%"))
+                .Concat(GetGamesFromSnellman("FireIceLadderW6%"))
+                .Concat(GetGamesFromSnellman("FireIceLadderW7%"))
+                .Concat(GetGamesFromSnellman("FireIceLadderW8%"))
+                .Concat(GetGamesFromSnellman("FireIceLadderW9%"))
+                .ToList();
 
 
             // First create GameWeek 1
